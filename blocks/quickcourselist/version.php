@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * Strings for component 'block_add_idea', language 'en', branch 'MOODLE_20_STABLE'
+ * Defines the metadata for the Quick Course List block
  *
- * @package   block_add_idea
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block_quickcourselist
+ * @author      Mark Johnson <mark.johnson@tauntons.ac.uk>
+ * @copyright   2010 Tauntons College, UK
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['add_idea:addinstance'] = 'Add a new Idea block';
-$string['pluginname'] = 'Add Idea';
-$string['add_idea:addinstance'] = 'Add a new Idea  block';
-$string['add_idea:myaddinstance'] = 'Add a new Idea block to the My Moodle page';
+$plugin->version = 2015042500;
+$plugin->requires = 2014051200;
+$plugin->component = 'block_quickcourselist';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = '2.1';
+

@@ -1,4 +1,6 @@
 <?php
+use core_competency\url;
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,97 +29,27 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The blog menu block class
  */
+global $CFG;
 class block_add_idea extends block_base {
 
-    function init() {
+   public function init() {
         $this->title = get_string('pluginname', 'block_add_idea');
+        
     }
 
-    function instance_allow_multiple() {
-        return true;
-    }
-
-    function has_config() {
-        return false;
-    }
-
-    function applicable_formats() {
-        return array('all' => true, 'my' => false, 'tag' => false);
-    }
-
-    function instance_allow_config() {
-        return true;
-    }
-
-    function get_content() {
-        global $CFG;
-
-        // detect if blog enabled
-        if ($this->content !== NULL) {
-            return $this->content;
-        }
-
-        if (empty($CFG->enableblogs)) {
-            $this->content = new stdClass();
-            $this->content->text = '';
-            if ($this->page->user_is_editing()) {
-                $this->content->text = get_string('blogdisable', 'blog');
-            }
-            return $this->content;
-
-        } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL and (!isloggedin() or isguestuser())) {
-            $this->content = new stdClass();
-            $this->content->text = '';
-            return $this->content;
-        }
-
-        // require necessary libs and get content
-        require_once($CFG->dirroot .'/blog/lib.php');
-
-        // Prep the content
-        $this->content = new stdClass();
-
-        $options = blog_get_all_options($this->page);
-        if (count($options) == 0) {
-            $this->content->text = '';
-            return $this->content;
-        }
-
-        // Iterate the option types
-        $menulist = array();
-        foreach ($options as $types) {
-            foreach ($types as $link) {
-                $menulist[] = html_writer::link($link['link'], $link['string']);
-            }
-            $menulist[] = '<hr />';
-        }
-        // Remove the last element (will be an HR)
-        array_pop($menulist);
-        // Display the content as a list
-        $this->content->text = html_writer::alist($menulist, array('class'=>'list'));
-
-        // Prepare the footer for this block
-        if (has_capability('moodle/blog:search', context_system::instance())) {
-            // Full-text search field
-            $form  = html_writer::tag('label', get_string('search', 'admin'), array('for'=>'blogsearchquery', 'class'=>'accesshide'));
-            $form .= html_writer::empty_tag('input', array('id'=>'blogsearchquery', 'type'=>'text', 'name'=>'search'));
-            $form .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('search')));
-            $this->content->footer = html_writer::tag('form', html_writer::tag('div', $form), array('class'=>'blogsearchform', 'method'=>'get', 'action'=>new moodle_url('/blog/index.php')));
-        } else {
-            // No footer to display
-            $this->content->footer = '';
-        }
-
-        // Return the content object
-        return $this->content;
-    }
-
-    /**
-     * Returns the role that best describes the blog menu block.
-     *
-     * @return string
-     */
-    public function get_aria_role() {
-        return 'navigation';
+    public function get_content() {
+    	if ($this->content !== null) {
+    		return $this->content;
+    	}
+    	/**$urltoaddidea = $CFG->wwwroot;
+    	$urltoaddidea=  html_writer::link('/edit_form.php', 'Create a an Idea');//  $urltoaddidea.'/blocks/add_idea/edit_form.php';
+    	$this->content         =  new stdClass;
+    	$this->content->text   = $urltoaddidea;
+    	$this->content->footer = 'Footer here...';
+    */ 
+   
+    	global $COURSE;
+    	$url = new moodle_url('/blocks/add_idea/course_edit_form.php?category=1');
+    	$this->content->footer = html_writer::link($url, get_string('addpage', 'block_add_idea'));
     }
 }
