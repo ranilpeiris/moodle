@@ -108,23 +108,12 @@ class course_edit_form extends moodleform {
         }
 
         if ($course->category) {
-        	echo "<script>alert('check')</script>";
-        	echo "<script>alert('category from course direct $course->category')</script>";
-        	echo "<script>alert('check')</script>";
         	$categoryid = $course->category;
-        	echo "<script>alert('categoryid from course $categoryid')</script>";}
+        	}
         else {
-        echo "<script>alert('checkxxx')</script>";
-        echo "<script>alert($category->id)</script>";
-        echo "<script>alert('checkxxx')</script>";
         $categoryid = $category->id;
-        echo "<script>alert('categoryid from category $categoryid')</script>";
-      
         }
        
-        
-        
-        
         
         $choices = array();
         $choices['0'] = get_string('hide');
@@ -461,28 +450,16 @@ class course_edit_form extends moodleform {
   function getrootcategoryname ($categoryid) {
   	
   		global $DB;
-  		echo "<script>alert( 'infunction')</script>";
-  		echo "<script>alert('$categoryid')</script>";
+  		
   		$catpathrecord= $DB->get_record('course_categories', array('id' =>$categoryid),'path');
   		$path = explode('/',$catpathrecord->path);
   		$root_category_id = $path[1];
   		$category_record= $DB->get_record('course_categories', array('id' => $root_category_id),'name');
-  		echo "<script>alert('category parent from $category_record->name')</script>";
+  		
   	
   		return $category_record->name;
   	
-    	/** global $DB;
-    	$catpathrecord = $DB->get_record('course_categories', array('id' => $category->id),'path');
-    	echo "<script>alert('$category->id')</script>";
-    	$path = explode('/',$catpathrecord->path);
-    	$root_category_id = $path[1];
-    	$category_record = $DB->get_record('course_categories', array('id' => $root_category_id),'name');
-    	$root_category_name = $category_record->name;
-    	echo "<script>alert('test')</script>";
-    	echo "<script>alert($root_category_id)</script>";
-    	 
-    	return $rootcategoryname;
-    	*/
+    
     }
     
     
