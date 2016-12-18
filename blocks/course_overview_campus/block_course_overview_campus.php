@@ -458,8 +458,8 @@ class block_course_overview_campus extends block_base {
                 // Top level category filter
                 if ($coc_config->toplevelcategorycoursefilter == true) {
                     // Add course top level category name to filter list
-                   // $filtertoplevelcategories[$c->toplevelcategoryid] = $c->toplevelcategoryname;
-                    $filtertoplevelcategories[$c->toplevelcategoryid] = 'Ideas';
+                   $filtertoplevelcategories[$c->toplevelcategoryid] = $c->toplevelcategoryname;
+                  
                 }
 
                 // Teacher information
