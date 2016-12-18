@@ -51,6 +51,12 @@ class block_blog_menu extends block_base {
 
     function get_content() {
         global $CFG;
+        
+        
+        
+        
+        
+        
 
         // detect if blog enabled
         if ($this->content !== NULL) {
@@ -84,13 +90,22 @@ class block_blog_menu extends block_base {
         }
 
         // Iterate the option types
-        $menulist = array();
+       /** $menulist = array();
         foreach ($options as $types) {
             foreach ($types as $link) {
                 $menulist[] = html_writer::link($link['link'], $link['string']);
             }
             $menulist[] = '<hr />';
-        }
+        }*/
+        $ideasrootid = $this->getideascategoryid();
+        $catur="/moodle/course/edit.php?category={$ideasrootid}";
+        
+        $menulist[] = html_writer::link( $catur, 'add new idea');
+        $menulist[] = '<hr />';
+        
+        
+        
+        
         // Remove the last element (will be an HR)
         array_pop($menulist);
         // Display the content as a list
@@ -102,7 +117,7 @@ class block_blog_menu extends block_base {
             $form  = html_writer::tag('label', get_string('search', 'admin'), array('for'=>'blogsearchquery', 'class'=>'accesshide'));
             $form .= html_writer::empty_tag('input', array('id'=>'blogsearchquery', 'type'=>'text', 'name'=>'search'));
             $form .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('search')));
-            $this->content->footer = html_writer::tag('form', html_writer::tag('div', $form), array('class'=>'blogsearchform', 'method'=>'get', 'action'=>new moodle_url('/blog/index.php')));
+            $this->content->footer = html_writer::tag('form', html_writer::tag('div', $form), array('class'=>'blogsearchform', 'method'=>'get', 'action'=>new moodle_url('/course/edit_form.php')));
         } else {
             // No footer to display
             $this->content->footer = '';
@@ -120,4 +135,12 @@ class block_blog_menu extends block_base {
     public function get_aria_role() {
         return 'navigation';
     }
+    
+    function getideascategoryid () {
+    	global $DB;
+    	$ideasrootcategoryid= $DB->get_record('course_categories', array('name' => 'Ideas'),'id');
+    	$ideascategoryid = $ideasrootcategoryid->id;
+    	return $ideascategoryid;
+    }
+    
 }

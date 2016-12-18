@@ -9,7 +9,7 @@ require_once($CFG->libdir. '/coursecatlib.php');
 /**
  * The form for handling editing a course.
  */
-class course_edit_form extends moodleform {
+class course_edit_idea_form extends moodleform {
     protected $course;
     protected $context;
 
@@ -18,11 +18,8 @@ class course_edit_form extends moodleform {
      */
     function definition() {
         global $CFG, $PAGE;
+       
         
-        $selectedcategory = 'Projects';
- 		
-      
- 		
         $mform    = $this->_form;
         $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
                 array(array('formid' => $mform->getAttribute('id'))));
@@ -107,25 +104,6 @@ class course_edit_form extends moodleform {
             }
         }
 
-        if ($course->category) {
-        	echo "<script>alert('check')</script>";
-        	echo "<script>alert('category from course direct $course->category')</script>";
-        	echo "<script>alert('check')</script>";
-        	$categoryid = $course->category;
-        	echo "<script>alert('categoryid from course $categoryid')</script>";}
-        else {
-        echo "<script>alert('checkxxx')</script>";
-        echo "<script>alert($category->id)</script>";
-        echo "<script>alert('checkxxx')</script>";
-        $categoryid = $category->id;
-        echo "<script>alert('categoryid from category $categoryid')</script>";
-      
-        }
-       
-        
-        
-        
-        
         $choices = array();
         $choices['0'] = get_string('hide');
         $choices['1'] = get_string('show');
@@ -179,7 +157,7 @@ class course_edit_form extends moodleform {
             $mform->removeElement('descriptionhdr');
             $mform->hardFreeze($summaryfields);
         }
-
+      
         // Course format.
         $mform->addElement('header', 'courseformathdr', get_string('type_format', 'plugin'));
 
@@ -209,12 +187,9 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'addcourseformatoptionshere');
         $mform->setType('addcourseformatoptionshere', PARAM_BOOL);
 
-        //check is an idea
-        echo "<script>alert('categoryid out of function category $categoryid')</script>";
-        $getrootcategoryname = $this->getrootcategoryname($categoryid);
-        if($getrootcategoryname !=='Ideas') {
-
         
+       
+         
         // Appearance.
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));
 
@@ -294,7 +269,7 @@ class course_edit_form extends moodleform {
             $mform->setDefault('enablecompletion', 0);
         }
 
-        enrol_course_edit_form($mform, $course, $context);
+        enrol_course_edit_idea_form($mform, $course, $context);
 
         $mform->addElement('header','groups', get_string('groupsettingsheader', 'group'));
 
@@ -330,7 +305,9 @@ class course_edit_form extends moodleform {
                 }
             }
         }
-    }
+        
+        
+        
         if (core_tag_tag::is_enabled('core', 'course') &&
                 ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:tag', $categorycontext))
                 || (!empty($course->id) && has_capability('moodle/course:tag', $coursecontext)))) {
@@ -362,8 +339,7 @@ class course_edit_form extends moodleform {
      */
     function definition_after_data() {
         global $DB;
-        
-        
+
         $mform = $this->_form;
 
         // add available groupings
@@ -392,7 +368,7 @@ class course_edit_form extends moodleform {
             }
             $courseformat = course_get_format((object)$params);
 
-            $elements = $courseformat->create_edit_form_elements($mform);
+            $elements = $courseformat->create_edit_idea_form_elements($mform);
             for ($i = 0; $i < count($elements); $i++) {
                 $mform->insertElementBefore($mform->removeElement($elements[$i]->getName(), false),
                         'addcourseformatoptionshere');
@@ -450,40 +426,12 @@ class course_edit_form extends moodleform {
         $errors = array_merge($errors, enrol_course_edit_validation($data, $this->context));
 
         $courseformat = course_get_format((object)array('format' => $data['format']));
-        $formaterrors = $courseformat->edit_form_validation($data, $files, $errors);
+        $formaterrors = $courseformat->edit_idea_form_validation($data, $files, $errors);
         if (!empty($formaterrors) && is_array($formaterrors)) {
             $errors = array_merge($errors, $formaterrors);
         }
 
         return $errors;
     }
-    
-  function getrootcategoryname ($categoryid) {
-  	
-  		global $DB;
-  		echo "<script>alert( 'infunction')</script>";
-  		echo "<script>alert('$categoryid')</script>";
-  		$catpathrecord= $DB->get_record('course_categories', array('id' =>$categoryid),'path');
-  		$path = explode('/',$catpathrecord->path);
-  		$root_category_id = $path[1];
-  		$category_record= $DB->get_record('course_categories', array('id' => $root_category_id),'name');
-  		echo "<script>alert('category parent from $category_record->name')</script>";
-  	
-  		return $category_record->name;
-  	
-    	/** global $DB;
-    	$catpathrecord = $DB->get_record('course_categories', array('id' => $category->id),'path');
-    	echo "<script>alert('$category->id')</script>";
-    	$path = explode('/',$catpathrecord->path);
-    	$root_category_id = $path[1];
-    	$category_record = $DB->get_record('course_categories', array('id' => $root_category_id),'name');
-    	$root_category_name = $category_record->name;
-    	echo "<script>alert('test')</script>";
-    	echo "<script>alert($root_category_id)</script>";
-    	 
-    	return $rootcategoryname;
-    	*/
-    }
-    
-    
 }
+
