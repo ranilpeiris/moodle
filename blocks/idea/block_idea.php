@@ -9,8 +9,20 @@ class block_idea extends block_base {
     		return $this->content;
     	}
     
+    	
+    	
     	$this->content         =  new stdClass;
-    	$this->content->text   = 'The content of our idea block!';
+    	//$ideasrootid = $this->getideascategoryid();
+    	$catur="/moodle/course/edit.php?category=12";
+    	 
+    	$menulist[] = html_writer::link( $catur, 'add new idea v1');
+    	$menulist[] = '<hr />';
+    	
+    	// Remove the last element (will be an HR)
+    	array_pop($menulist);
+    	// Display the content as a list
+    	$this->content->text = html_writer::alist($menulist, array('class'=>'list'));
+    	 
     	$this->content->footer = 'Footer here...';
     
     	return $this->content;
