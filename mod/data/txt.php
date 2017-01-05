@@ -16,5 +16,3 @@ echo $OUTPUT->header();
 echo "Hello World";
 
 echo $OUTPUT->footer();
-
-
