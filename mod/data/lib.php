@@ -610,10 +610,15 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $cell->attributes['class'] = 'controls';
             $table->data[] = new html_table_row(array($cell));
         } else if ($template == 'singletemplate') {
-            $cell = new html_table_cell('##edit##  ##delete##  ##approve##  ##disapprove##  ##export##');
+        	        	 
+            $cell = new html_table_cell('##edit## ');
             $cell->colspan = 2;
             $cell->attributes['class'] = 'controls';
             $table->data[] = new html_table_row(array($cell));
+           
+            
+            
+            
         } else if ($template == 'asearchtemplate') {
             $row = new html_table_row(array(get_string('authorfirstname', 'data').': ', '##firstname##'));
             $row->attributes['class'] = 'searchcontrols';
@@ -1423,12 +1428,30 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
              *    Printing Ratings Form       *
              *********************************/
             if ($template == 'singletemplate') {    //prints ratings options
-                data_print_ratings($data, $record);
+            	
+            	
+            	data_print_ratings($data, $record);
             }
 
             /**********************************
              *    Printing Comments Form       *
              *********************************/
+           //Ranil - Add create course project button
+            if ($template == 'singletemplate') {    //prints ratings options
+            	 
+            	//edit by Ranil
+            	echo '<form action="http://localhost/moodle/mod/data/prepare_create_project.php" method="post">
+            			<input type="hidden" name="dataid" value="'.$data->id.'" />	
+            			<input type="hidden" name="recordid" value="'.$record->id.'" />	
+            			<input type="hidden" name="courseid" value="'.$data->course.'" />	
+            			<input type="submit" value="Select This Project Idea">
+            			</form>';
+            	echo "test course id $data->course";
+            	
+            	
+            }
+            
+            
             if (($template == 'singletemplate') && ($data->comments)) {
                 if (!empty($CFG->usecomments)) {
                     require_once($CFG->dirroot . '/comment/lib.php');
