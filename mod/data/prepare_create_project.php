@@ -23,6 +23,9 @@ $coursecontext = context_course::instance($courseid);
 $recordtitle = $DB->get_field(data_content, content, array('recordid'=>$recordid), $strictness=IGNORE_MISSING);
 $recorduserid = $DB->get_field(data_records, userid, array('id'=>$recordid), $strictness=IGNORE_MISSING);
 $coursecategory= $DB->get_field(course, category, array('id'=> $courseid), $strictness=IGNORE_MISSING);
+$approved= $DB->get_field(data_records, approved, array('id'=> $recordid), $strictness=IGNORE_MISSING);
+
+
 
 if ($roles = get_user_roles($coursecontext, $USER->id)) {
 	foreach ($roles as $role) {
@@ -53,11 +56,15 @@ echo $OUTPUT->heading($strdataplural, 2);
 echo '<form action="http://localhost/moodle/mod/data/create_project.php" method="post">
             			<input type="hidden" name="ideaTitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="categoryId" value="'.$coursecategory.'" />
+            			<input type="hidden" name="recordId" value="'.$recordid.'" />
             			<input type="submit" value="Confirm Create project">
             			</form>';
 
 if ($userRoleId==$recordUserRoleId){
 	echo $OUTPUT->notification('You cannot select your own idea');
+};
+if ($approved==1){
+	echo $OUTPUT->notification('Idea has already selected');
 };
 
 
@@ -83,6 +90,7 @@ echo "coursecategory is $coursecategory </br>";
 echo "User Role $userRoleId <br />";
 echo "Record Owner role $recordUserRoleId <br />";
 echo "Is admin $isadmin <br />";
+echo "approved : $approved <br/>";
 
 
 
