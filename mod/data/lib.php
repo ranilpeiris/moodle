@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @package   mod_data
@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Some constants
+// TODO Some constants
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
 
@@ -87,7 +87,8 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @param int $cm
      */
     function __construct($field=0, $data=0, $cm=0) {   // Field or data or both, each can be id or object
-        global $DB;
+       
+    	global $DB;
 
         if (empty($field) && empty($data)) {
             print_error('missingfield', 'data');
@@ -1437,16 +1438,25 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
              *    Printing Comments Form       *
              *********************************/
            //TODO submit button was here
-            //Ranil - Add create course project button
-           
+            
+            // Ranil - Add create course project button
             if ($template == 'singletemplate') {    //prints ratings options
-            
-            	//TODO edit by Ranil
-            
-            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='. $data->course .'&dataid='. $data->id.'&recordid='. $record->id.'"> Select This Idea </a>';
-            	//echo "test course id $data->course";
-            echo 'courseid='.$data->course .'&dataid='.$data->id.'&recordid='.$record->id.'';
-            
+           				$courseid=$data->course;
+           				$dataid = $data->id;
+           				$recordid = $record->id;
+           				$recordtitle = $DB->get_field('data_content', 'content', array('recordid'=>$recordid , 'fieldid'=>'1'), $strictness=IGNORE_MISSING);
+           				
+           				
+            echo "xxxxx $courseid,$dataid,$recordid";
+            if (isIdeaSelectionOk($courseid,$dataid,$recordid)) {
+            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='. $data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
+            	// echo "test course id $data->course";
+            	echo 'courseid='.$data->course .'&dataid='.$data->id.'&recordid='.$record->id.'';
+           		} else 
+           		{
+           		echo 'You can not select this idea';
+           		}
+           		
             }
             
             
@@ -4140,3 +4150,43 @@ function data_set_config(&$database, $key, $value) {
         $DB->set_field('data', 'config', $database->config, ['id' => $database->id]);
     }
 }
+
+//TODO idea creation check
+function isIdeaSelectionOk($courseid, $dataid, $recordid){
+	global $DB;
+	global $USER;
+	
+	$isIdeaSelectionOk=true;
+	$userRoleId ="";
+	$recordUserRoleId = "";
+	$isadmin ="";
+	
+	$coursecontext = context_course::instance($courseid);
+	$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
+	$coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
+	$approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
+	
+	if ($roles = get_user_roles($coursecontext, $USER->id)) {
+		foreach ($roles as $role) {
+			$userRoleId = $role->roleid;
+		}
+	}
+	
+	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
+		foreach ($roles as $role) {
+			$recordUserRoleId = $role->roleid;
+		}
+	}	
+
+	if (is_siteadmin()){
+		$isadmin = true;
+	}
+
+	
+	if ( ($userRoleId==$recordUserRoleId) || $approved==1 ){
+		$isIdeaSelectionOk=false;
+	}
+	
+	return $isIdeaSelectionOk;
+}
+

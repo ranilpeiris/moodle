@@ -8,11 +8,11 @@ global $USER;
 global $DB;
 
 
-$PAGE->set_url('/mod/data/create_project.php', array('id'=>$id));
+$PAGE->set_url('/mod/data/create_project.php');
 
-$ideaTitle = required_param( 'ideaTitle', PARAM_TEXT);
-$categoryId = required_param('categoryId', PARAM_TEXT);// course
-$recordId = required_param('recordId', PARAM_TEXT);// course
+$ideatitle = required_param( 'ideatitle', PARAM_TEXT);
+$categoryid = required_param('categoryid', PARAM_TEXT);// course
+$recordid = required_param('recordid', PARAM_TEXT);// course
 
 
 echo $OUTPUT->header();
@@ -20,29 +20,26 @@ echo $OUTPUT->header();
 
 
 $data = array(
-		'shortname' => $ideaTitle,
-		'fullname' => $ideaTitle,
-		'category' => $categoryId);
+		'shortname' => $ideatitle,
+		'fullname' => $ideatitle,
+		'category' => $categoryid);
 
 $course = create_course((object) $data );
 
 $recordobj = new stdclass;
-$recordobj->id = $recordId;
-$recordobj->approved = 3;
+$recordobj->id = $recordid;
+$recordobj->approved = 1;
 
-$DB->update_record(data_records, $recordobj, $bulk=false);
-
-
-if ($this->has_errors()) {
-	throw new moodle_exception('Cannot proceed, errors were detected.');
-}
-
+$DB->update_record('data_records', $recordobj, $bulk=false);
 if ($course) {
-	echo "http://localhost/moodle/course/view.php?id={$course->id}";
+echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
 }
+//if (has_errors()) {
+//	throw new moodle_exception('Cannot proceed, errors were detected.');
+//}
 
 
-
+	echo "http://localhost/moodle/course/view.php?id={$course->id}";
 
 echo $OUTPUT->footer();
 
