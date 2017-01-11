@@ -10,19 +10,19 @@ global $DB;
 
 $PAGE->set_url('/mod/data/create_project.php', array('id'=>$id));
 
-$ideaTitle = required_param( ideaTitle, PARAM_TEXT);
-$dataid = required_param('categoryId', PARAM_TEXT);// course
+$ideaTitle = required_param( 'ideaTitle', PARAM_TEXT);
+$categoryId = required_param('categoryId', PARAM_TEXT);// course
 
 
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strdataplural, 2);
+//echo $OUTPUT->heading($strdataplural, 2);
 
 
 $data = array(
 		'shortname' => $ideaTitle,
 		'fullname' => $ideaTitle,
-		'category' => '1');
+		'category' => $categoryId);
 
 $course = create_course((object) $data );
 

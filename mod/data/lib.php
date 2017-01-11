@@ -1436,20 +1436,35 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             /**********************************
              *    Printing Comments Form       *
              *********************************/
-           //Ranil - Add create course project button
+           //TODO submit button was here
+            //Ranil - Add create course project button
+           
             if ($template == 'singletemplate') {    //prints ratings options
+            
+            	//TODO edit by Ranil
+            
+            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='. $data->course .'&dataid='. $data->id.'&recordid='. $record->id.'"> Select This Idea </a>';
+            	//echo "test course id $data->course";
+            echo 'courseid='.$data->course .'&dataid='.$data->id.'&recordid='.$record->id.'';
+            
+            }
+            
+            
+            /**if ($template == 'singletemplate') {    //prints ratings options
+            
+            	//TODO edit by Ranil
             	 
-            	//edit by Ranil
             	echo '<form action="http://localhost/moodle/mod/data/prepare_create_project.php" method="post">
-            			<input type="hidden" name="dataid" value="'.$data->id.'" />	
-            			<input type="hidden" name="recordid" value="'.$record->id.'" />	
-            			<input type="hidden" name="courseid" value="'.$data->course.'" />	
+            			<input type="hidden" name="dataid" value="'.$data->id.'" />
+            			<input type="hidden" name="recordid" value="'.$record->id.'" />
+            			<input type="hidden" name="courseid" value="'.$data->course.'" />
             			<input type="submit" value="Select This Project Idea">
             			</form>';
             	echo "test course id $data->course";
-            	
-            	
+            	 
+            	 
             }
+            */
             
             
             if (($template == 'singletemplate') && ($data->comments)) {
@@ -1470,6 +1485,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             }
         }
     }
+       
 }
 
 /**
