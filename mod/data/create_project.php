@@ -3,6 +3,7 @@
 require_once("../../config.php");
 require_once("lib.php");
 require_once("../../course/lib.php");
+require_once("../../lib/enrollib.php");
 
 global $USER;
 global $DB;
@@ -13,18 +14,49 @@ $PAGE->set_url('/mod/data/create_project.php');
 $ideatitle = required_param( 'ideatitle', PARAM_TEXT);
 $categoryid = required_param('categoryid', PARAM_TEXT);// course
 $recordid = required_param('recordid', PARAM_TEXT);// course
+$maincourseid = required_param('maincourseid', PARAM_TEXT);
+$dataid = required_param('dataid', PARAM_TEXT);// course
+
+$coursecontext = context_course::instance($maincourseid);
+$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
+$coursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
+$approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
+
+if ($roles = get_user_roles($coursecontext, $USER->id)) {
+	foreach ($roles as $role) {
+		$userRoleId = $role->roleid;
+	}
+}
+
+if ($roles = get_user_roles($coursecontext, $recorduserid)) {
+	foreach ($roles as $role) {
+		$recordUserRoleId = $role->roleid;
+	}
+}
+
+if (is_siteadmin()){
+	$isadmin = true;
+}
 
 
 echo $OUTPUT->header();
 //echo $OUTPUT->heading($strdataplural, 2);
 
 
+
 $data = array(
 		'shortname' => $ideatitle,
 		'fullname' => $ideatitle,
-		'category' => $categoryid);
+		'category' => $categoryid,
+);
+
+
 
 $course = create_course((object) $data );
+
+$enrollement1 = enrol_try_internal_enrol($course->id, $recorduserid, $recordUserRoleId, 0, 0);
+$enrollement1 = enrol_try_internal_enrol($course->id, $USER->id, $userRoleId, 0, 0);
+
 
 $recordobj = new stdclass;
 $recordobj->id = $recordid;

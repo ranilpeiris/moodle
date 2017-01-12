@@ -32,7 +32,11 @@ echo $OUTPUT->header();
 echo '<form action="http://localhost/moodle/mod/data/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="categoryid" value="'.$coursecategory.'" />
+            			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
+            			<input type="hidden" name="dataid" value="'.$dataid.'" />
             			<input type="hidden" name="recordid" value="'.$recordid.'" />
+            					
+            					
             			<input type="submit" value="Confirm Create project">
             			</form>';
 
