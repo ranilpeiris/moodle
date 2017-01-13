@@ -16,9 +16,12 @@ $categoryid = required_param('categoryid', PARAM_TEXT);// course
 $recordid = required_param('recordid', PARAM_TEXT);// course
 $maincourseid = required_param('maincourseid', PARAM_TEXT);
 $dataid = required_param('dataid', PARAM_TEXT);// course
+$recordUserRoleId = required_param('recordUserRoleId', PARAM_TEXT);
+$newuserid = required_param('newuserid', PARAM_TEXT);// course
+$recorduserid = required_param('recorduserid', PARAM_TEXT);// course
 
 $coursecontext = context_course::instance($maincourseid);
-$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
+//$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
 $coursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
 $approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
 
@@ -56,7 +59,7 @@ $data = array(
 $course = create_course((object) $data );
 
 $enrollement1 = enrol_try_internal_enrol($course->id, $recorduserid, $recordUserRoleId, 0, 0);
-$enrollement2 = enrol_try_internal_enrol($course->id, $USER->id, $userRoleId, 0, 0);
+$enrollement2 = enrol_try_internal_enrol($course->id, $newuserid , $userRoleId, 0, 0);
 
 
 $recordobj = new stdclass;
@@ -64,6 +67,7 @@ $recordobj->id = $recordid;
 $recordobj->approved = 1;
 
 $DB->update_record('data_records', $recordobj, $bulk=false);
+
 if ($course) {
 echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
 }

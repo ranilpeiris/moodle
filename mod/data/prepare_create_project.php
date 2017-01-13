@@ -119,15 +119,15 @@ if ($changeusername==""  ){
             			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
             			<input type="hidden" name="dataid" value="'.$dataid.'" />
             			<input type="hidden" name="recordid" value="'.$recordid.'" />
-         
+            			<input type="hidden" name="recordUserRoleId" value="'.$recordUserRoleId.'" />
+            			<input type="hidden" name="userRoleId" value="'.$userRoleId.'" />		
+            			<input type="hidden" name="newuserid" value="'.$newuserid.'" />
+            			
+            			<input type="hidden" name="recorduserid" value="'.$recorduserid.'" />
          
             			<input type="submit" value="Confirm Create project">
             			</form>';
 }
-
-
-
-
 
 
 echo '<form action="http://localhost/moodle/mod/data/view.php" method="post">
