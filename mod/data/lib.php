@@ -1448,34 +1448,21 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
            				
            				
             echo "xxxxx $courseid,$dataid,$recordid";
-            if (isIdeaSelectionOk($courseid,$dataid,$recordid)) {
+            
+            $isideaselectionok= isIdeaSelectionOk($courseid,$dataid,$recordid);
+            
+            if ($isideaselectionok=='ok') {
             	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='. $data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
             	// echo "test course id $data->course";
             	echo 'courseid='.$data->course .'&dataid='.$data->id.'&recordid='.$record->id.'';
            		} else 
            		{
-           		echo 'You can not select this idea';
+           		echo "You can not select this idea: $isideaselectionok ";
            		}
            		
             }
             
-            
-            /**if ($template == 'singletemplate') {    //prints ratings options
-            
-            	//TODO edit by Ranil
-            	 
-            	echo '<form action="http://localhost/moodle/mod/data/prepare_create_project.php" method="post">
-            			<input type="hidden" name="dataid" value="'.$data->id.'" />
-            			<input type="hidden" name="recordid" value="'.$record->id.'" />
-            			<input type="hidden" name="courseid" value="'.$data->course.'" />
-            			<input type="submit" value="Select This Project Idea">
-            			</form>';
-            	echo "test course id $data->course";
-            	 
-            	 
-            }
-            */
-            
+                       
             
             if (($template == 'singletemplate') && ($data->comments)) {
                 if (!empty($CFG->usecomments)) {
@@ -4156,37 +4143,56 @@ function isIdeaSelectionOk($courseid, $dataid, $recordid){
 	global $DB;
 	global $USER;
 	
-	$isIdeaSelectionOk=true;
+	$isIdeaSelectionOk='ok';
 	$userRoleId ="";
 	$recordUserRoleId = "";
 	$isadmin ="";
+	$recordUserRolename="";
+	$userRolename="";
 	
 	$coursecontext = context_course::instance($courseid);
 	$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
 	$coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
 	$approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
 	
+	
+	
 	if ($roles = get_user_roles($coursecontext, $USER->id)) {
 		foreach ($roles as $role) {
 			$userRoleId = $role->roleid;
+			$userRolename = $role->shortname;
 		}
 	}
 	
 	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
 		foreach ($roles as $role) {
 			$recordUserRoleId = $role->roleid;
+			$recordUserRolename =  $role->shortname;
+			//$recordUserRolename = setrecordusertype($recordUserRoleId);
 		}
 	}	
-
-	if (is_siteadmin()){
-		$isadmin = true;
-	}
-
 	
-	if ( ($userRoleId==$recordUserRoleId) || $approved==1 ){
-		$isIdeaSelectionOk=false;
-	}
-	
-	return $isIdeaSelectionOk;
+	if ( $approved==0 ){
+		return "The idea has already selected";
+	}elseif (is_siteadmin()){
+		return "ok";
+		} elseif ( $USER->id==$recorduserid) {
+					return "You are the author of this Idea";
+			} elseif ( $userRoleId==$recordUserRoleId) {
+				return  "The idea has submited my another ".setrecordusertype($recordUserRoleId);
+			}else
+				{
+				return "ok";
+			} 
 }
 
+	
+function setrecordusertype($recordUserRoleId) {
+	if ($recordUserRoleId==3 || $recordUserRoleId==4 ) {
+		return 'Teacher';
+}else {
+	
+	return 'Student';
+}
+	
+}

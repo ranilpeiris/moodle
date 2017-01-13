@@ -21,7 +21,7 @@ $recordtitle=required_param('recordtitle', PARAM_TEXT);;
 
 $coursecontext = context_course::instance($courseid);
 //$recordtitle = $DB->get_field('data_content', 'content', array('recordid'=>$recordid), $strictness=IGNORE_MISSING);
-$recorduserid = $DB->get_field(data_records, userid, array('id'=>$recordid), $strictness=IGNORE_MISSING);
+$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
 $coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
 $recordusername= $DB->get_field('user', 'username', array('id'=> $recorduserid), $strictness=IGNORE_MISSING);
 //$approved= $DB->get_field(data_records, approved, array('id'=> $recordid), $strictness=IGNORE_MISSING);
@@ -53,13 +53,14 @@ $mform->set_data($toform);
 		//*******
 	}
 	
+	
+	$mform->display();
 }
 
 // end change user form
 
 
 
-$mform->display();
 
 //ranil check user roles
 
@@ -103,13 +104,16 @@ if ($userRoleId==3){
 
 
 //ranil check wether the user has selected
-if ($changeusername==""  ){
+
+
+if ($newuserid==""  ){
 	echo " cannot proceed! You have not selected a user to change";
-} else 
-{
+} elseif ($recordUserRoleId==$userRoleId) {
+	echo " cannot proceed! You have selected same type of users";;
+}else{
 	echo "Title for the new project: $recordtitle </br> ";
 	echo "The idea proposed by: $recordusername  </br> ";
-	echo "The idea will selected by: $changeusername  </br> ";
+	echo "The idea will selected by: $newusername  </br> ";
 	echo " The project supervisor:$projectsupervisor </br>";
 	echo " The project student   :$projectstudent </br>";
 	//edit by Ranil

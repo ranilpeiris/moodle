@@ -186,7 +186,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
             // Reset the approved flag after edit if the user does not have permission to approve their own entries.
             if (!has_capability('mod/data:approve', $context)) {
-                $record->approved = 0;
+                $record->approved = 1;
             }
 
             // Update the parent record.

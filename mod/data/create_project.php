@@ -64,7 +64,7 @@ $enrollement2 = enrol_try_internal_enrol($course->id, $newuserid , $userRoleId, 
 
 $recordobj = new stdclass;
 $recordobj->id = $recordid;
-$recordobj->approved = 1;
+$recordobj->approved = 0;
 
 $DB->update_record('data_records', $recordobj, $bulk=false);
 
