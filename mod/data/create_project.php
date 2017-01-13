@@ -22,6 +22,10 @@ $recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid),
 $coursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
 $approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
 
+
+
+
+
 if ($roles = get_user_roles($coursecontext, $USER->id)) {
 	foreach ($roles as $role) {
 		$userRoleId = $role->roleid;
@@ -34,9 +38,6 @@ if ($roles = get_user_roles($coursecontext, $recorduserid)) {
 	}
 }
 
-if (is_siteadmin()){
-	$isadmin = true;
-}
 
 
 echo $OUTPUT->header();
@@ -55,7 +56,7 @@ $data = array(
 $course = create_course((object) $data );
 
 $enrollement1 = enrol_try_internal_enrol($course->id, $recorduserid, $recordUserRoleId, 0, 0);
-$enrollement1 = enrol_try_internal_enrol($course->id, $USER->id, $userRoleId, 0, 0);
+$enrollement2 = enrol_try_internal_enrol($course->id, $USER->id, $userRoleId, 0, 0);
 
 
 $recordobj = new stdclass;
@@ -69,6 +70,13 @@ echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go t
 //if (has_errors()) {
 //	throw new moodle_exception('Cannot proceed, errors were detected.');
 //}
+
+if (is_siteadmin()){
+
+	echo '<form><tr><td>hello</td></tr> </form>';
+
+}
+
 
 
 	echo "http://localhost/moodle/course/view.php?id={$course->id}";
