@@ -107,13 +107,6 @@ class course_edit_form extends moodleform {
             }
         }
 
-        if ($course->category) {
-        	$categoryid = $course->category;
-        	}
-        else {
-        $categoryid = $category->id;
-        }
-       
         
         $choices = array();
         $choices['0'] = get_string('hide');
@@ -439,21 +432,6 @@ class course_edit_form extends moodleform {
         }
 
         return $errors;
-    }
-    
-  function getrootcategoryname ($categoryid) {
-  	
-  		global $DB;
-  		
-  		$catpathrecord= $DB->get_record('course_categories', array('id' =>$categoryid),'path');
-  		$path = explode('/',$catpathrecord->path);
-  		$root_category_id = $path[1];
-  		$category_record= $DB->get_record('course_categories', array('id' => $root_category_id),'name');
-  		
-  	
-  		return $category_record->name;
-  	
-    
     }
     
     
