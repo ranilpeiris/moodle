@@ -891,7 +891,7 @@ function data_add_record($data, $groupid=0){
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
     if (has_capability('mod/data:approve', $context)) {
-        $record->approved = 1;
+        $record->approved = 0;//ranil change to 0 to set all entries to set as un approved
     } else {
         $record->approved = 0;
     }
@@ -1441,15 +1441,19 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             
             // Ranil - Add create course project button
             if ($template == 'singletemplate') {    //prints ratings options
+            			global $DB, $USER;
            				$courseid=$data->course;
            				$dataid = $data->id;
            				$recordid = $record->id;
            				$recordtitle = $DB->get_field('data_content', 'content', array('recordid'=>$recordid , 'fieldid'=>'1'), $strictness=IGNORE_MISSING);
            				
            				
-            echo "xxxxx $courseid,$dataid,$recordid";
+            echo "</br> xxxxx cid  $courseid, did $dataid, rid $recordid";
             
-            $isideaselectionok= isIdeaSelectionOk($courseid,$dataid,$recordid);
+            $approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
+            $nofapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=1', array($dataid, $USER->id));
+            
+            $isideaselectionok= isIdeaSelectionOk($courseid,$dataid,$recordid,$approved,$nofapprovedideas);
             
             if ($isideaselectionok=='ok') {
             	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='. $data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
@@ -4139,67 +4143,54 @@ function data_set_config(&$database, $key, $value) {
 }
 
 //TODO idea creation check
-function isIdeaSelectionOk($courseid, $dataid, $recordid){
+function isIdeaSelectionOk($courseid, $dataid, $recordid , $approved ,$nofapprovedideas  ){
 	global $DB;
 	global $USER;
-	
-	$isIdeaSelectionOk='ok';
-	$userRoleId ="";
-	$recordUserRoleId = "";
-	$isadmin ="";
-	$recordUserRolename="";
-	$userRolename="";
-	
 	$coursecontext = context_course::instance($courseid);
 	$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
 	$coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-	$approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
-	//$nofcoursesforstudent1= $DB->count_records_sql( 'SELECT count({course}.id) FROM {role_assignments} JOIN {user} ON {user}.id = {role_assignments}.userid JOIN {role} ON {role}.id = {role_assignments}.roleid JOIN {context} ON {context}.id = {role_assignments}.contextid JOIN {course}  ON {course}.id = {context}.instanceid WHERE {role_assignments}.userid = {user}.id AND {role_assignments}.contextid = {context}.id AND {context}.contextlevel = 50 AND {context}.instanceid = {course}.id AND  {role}.id = 5 AND {course}.category = ? AND {user}.id = ? ', array ($coursecategory,$USER->id) ); 
-	$nofapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=0', array($dataid, $USER->id));
-	
-	echo "nofapprovedideas xxxxxx; $nofapprovedideas </br>";
-
+	//$recordUserRoleId="";
 	
 	
-	if ($roles = get_user_roles($coursecontext, $USER->id)) {
-		foreach ($roles as $role) {
-			$userRoleId = $role->roleid;
-			$userRolename = $role->shortname;
-		}
+	
+	if ($approved==1) {
+		return  "The idea has already selected";
+	} elseif ((getrecordUserRoleId($recorduserid,$coursecontext))==5 AND $nofapprovedideas >=1 )  {
+		return "Already you have a selected idea: Contact coordinator if you want to change";
+	} elseif ($recorduserid==$USER->id) {
+		return "You are the author of this Idea";
+	} elseif ((getuserroleid($USER->id, $coursecontext)) == (getrecordUserRoleId( $recorduserid , $coursecontext ))){ // Check user types of user and idea publisher
+		
+		return setrecordusertype(getrecordUserRoleId( $recorduserid , $coursecontext ));
+	} else {
+		return "ok";
 	}
 	
-	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
-		foreach ($roles as $role) {
-			$recordUserRoleId = $role->roleid;
-			$recordUserRolename =  $role->shortname;
-			//$recordUserRolename = setrecordusertype($recordUserRoleId);
-		}
-	}	
-	
-	
-	if ($userRoleId==5 AND $nofapprovedideas >=1 ) 
-	{
-	return "Already you have a selected idea: Contact coordinator if you want to change";
-	}elseif ( $approved==0 ){
-					return "The idea has already selected";
-						}elseif (is_siteadmin()){
-						return "ok";
-							} elseif ( $USER->id==$recorduserid) {
-								return "You are the author of this Idea";
-									} elseif ( $userRoleId==$recordUserRoleId) {
-									return  "The idea has submited my another ".setrecordusertype($recordUserRoleId);
-										}else{
-										return "ok";
-										} 
-			}
+}
 
 	
 function setrecordusertype($recordUserRoleId) {
-	if ($recordUserRoleId==3 || $recordUserRoleId==4 ) {
-		return 'Teacher';
-}else {
-	
-	return 'Student';
+	if ($recordUserRoleId==4 || $recordUserRoleId==3 ||$recordUserRoleId==1 ) {
+		return "since this has published by another Teacher"; 
+		}elseif ($recordUserRoleId==5){
+		return "since this has published by another Student";
+	}	
 }
-	
+
+function getuserroleid($userid, $coursecontext){
+	if ($roles = get_user_roles($coursecontext,$userid)) {
+		foreach ($roles as $role) {
+		$userRoleId = $role->roleid; //role id of the user on the course
+		}
+		return  $userRoleId;
+	}
+}
+
+function getrecordUserRoleId ($recorduserid, $coursecontext){
+	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
+		foreach ($roles as $role) {
+		$recordUserRoleId = $role->roleid; //role id of the publisher on the course
+		}
+		return  $recordUserRoleId;
+	}
 }

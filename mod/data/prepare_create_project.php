@@ -90,14 +90,14 @@ $newusername= $DB->get_field('user', 'username', array('id'=> $newuserid), $stri
 if ($recordUserRoleId==5){
 	$projectstudent = $recordusername;
 }
-if ($recordUserRoleId==3){
+if ($recordUserRoleId==4 || $recordUserRoleId==3 ||$recordUserRoleId==1){
 	$projectsupervisor = $recordusername;
 }
 
 if ($userRoleId==5){
 	$projectstudent = $newusername;
 }
-if ($userRoleId==3){
+if ($userRoleId==4 || $userRoleId==3 || $userRoleId==1){
 	$projectsupervisor = $newusername;
 }
 
