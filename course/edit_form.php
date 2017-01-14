@@ -198,12 +198,6 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'addcourseformatoptionshere');
         $mform->setType('addcourseformatoptionshere', PARAM_BOOL);
 
-        //check is an idea
-        echo "<script>alert('categoryid out of function category $categoryid')</script>";
-        $getrootcategoryname = $this->getrootcategoryname($categoryid);
-        if($getrootcategoryname !=='Ideas') {
-
-        
         // Appearance.
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));
 
@@ -319,7 +313,7 @@ class course_edit_form extends moodleform {
                 }
             }
         }
-    }
+    
         if (core_tag_tag::is_enabled('core', 'course') &&
                 ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:tag', $categorycontext))
                 || (!empty($course->id) && has_capability('moodle/course:tag', $coursecontext)))) {
