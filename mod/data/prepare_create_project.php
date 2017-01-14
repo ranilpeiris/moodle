@@ -15,8 +15,8 @@ $PAGE->set_url('/mod/data/prepare_create_project.php');
 $username = $USER->username;
 $userrole = "";
 $recordid = required_param('recordid', PARAM_TEXT);
-$dataid = required_param('dataid', PARAM_TEXT);// course
-$courseid = required_param('courseid', PARAM_TEXT);// course
+$dataid = required_param('dataid', PARAM_TEXT);
+$courseid = required_param('courseid', PARAM_TEXT);
 $recordtitle=required_param('recordtitle', PARAM_TEXT);;
 
 $coursecontext = context_course::instance($courseid);
@@ -140,19 +140,6 @@ echo '<form action="http://localhost/moodle/mod/data/view.php" method="post">
             			<input type="submit" value="Cancel Create project">
             			</form>';
  
-
-echo "Username id is $username <br />";
-echo "Data id is $dataid <br />";
-echo "Record id is $recordid <br />";
-echo "Record title is $recordtitle <br />";
-//echo "Record User is $recorduserid <br />";
-//echo "Course User is $courseid <br />";
-//echo "Course context is $coursecontext->id <br />";
-echo "coursecategory is $coursecategory </br>";
-//echo "User Role $userRoleId <br />";
-//echo "Record Owner role $recordUserRoleId <br />";
-//echo "Is admin $isadmin <br />";
-//echo "approved : $approved <br/>";
 
 echo $OUTPUT->footer();
 

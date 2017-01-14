@@ -4154,7 +4154,11 @@ function isIdeaSelectionOk($courseid, $dataid, $recordid){
 	$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
 	$coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
 	$approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
+	//$nofcoursesforstudent1= $DB->count_records_sql( 'SELECT count({course}.id) FROM {role_assignments} JOIN {user} ON {user}.id = {role_assignments}.userid JOIN {role} ON {role}.id = {role_assignments}.roleid JOIN {context} ON {context}.id = {role_assignments}.contextid JOIN {course}  ON {course}.id = {context}.instanceid WHERE {role_assignments}.userid = {user}.id AND {role_assignments}.contextid = {context}.id AND {context}.contextlevel = 50 AND {context}.instanceid = {course}.id AND  {role}.id = 5 AND {course}.category = ? AND {user}.id = ? ', array ($coursecategory,$USER->id) ); 
+	$nofapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=0', array($dataid, $USER->id));
 	
+	echo "nofapprovedideas xxxxxx; $nofapprovedideas </br>";
+
 	
 	
 	if ($roles = get_user_roles($coursecontext, $USER->id)) {
@@ -4172,19 +4176,22 @@ function isIdeaSelectionOk($courseid, $dataid, $recordid){
 		}
 	}	
 	
-	if ( $approved==0 ){
-		return "The idea has already selected";
-	}elseif (is_siteadmin()){
-		return "ok";
-		} elseif ( $USER->id==$recorduserid) {
-					return "You are the author of this Idea";
-			} elseif ( $userRoleId==$recordUserRoleId) {
-				return  "The idea has submited my another ".setrecordusertype($recordUserRoleId);
-			}else
-				{
-				return "ok";
-			} 
-}
+	
+	if ($userRoleId==5 AND $nofapprovedideas >=1 ) 
+	{
+	return "Already you have a selected idea: Contact coordinator if you want to change";
+	}elseif ( $approved==0 ){
+					return "The idea has already selected";
+						}elseif (is_siteadmin()){
+						return "ok";
+							} elseif ( $USER->id==$recorduserid) {
+								return "You are the author of this Idea";
+									} elseif ( $userRoleId==$recordUserRoleId) {
+									return  "The idea has submited my another ".setrecordusertype($recordUserRoleId);
+										}else{
+										return "ok";
+										} 
+			}
 
 	
 function setrecordusertype($recordUserRoleId) {

@@ -13,7 +13,7 @@ class changeuser_form extends moodleform {
 		$recordtitle = $this->_customdata['recordtitle'];
 		
 				
-		$userlist = $DB->get_records_sql('SELECT DISTINCT {user}.username FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));
+		$userlist = $DB->get_records_sql('SELECT {user}.username FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));
 		
 		$usernames = array_map(create_function('$o', 'return $o->username;'), $userlist);
 		
