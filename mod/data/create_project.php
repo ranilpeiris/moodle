@@ -29,15 +29,21 @@ $approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $
 
 
 
-if ($roles = get_user_roles($coursecontext, $USER->id)) {
+if ($roles = get_user_roles($coursecontext, $newuserid)) {
 	foreach ($roles as $role) {
 		$userRoleId = $role->roleid;
+	}
+	if ($userRoleId = 4 || $userRoleId = 3   ) {
+		$userRoleId = 3;
 	}
 }
 
 if ($roles = get_user_roles($coursecontext, $recorduserid)) {
 	foreach ($roles as $role) {
 		$recordUserRoleId = $role->roleid;
+	}
+	if ($userRoleId = 4 || $userRoleId = 3   ) {
+		$userRoleId = 3;
 	}
 }
 
@@ -55,35 +61,32 @@ $data = array(
 );
 
 
-
 $course = create_course((object) $data );
+
+//project creation information
+if ($course) {
+	echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
+} else {
+	echo '<h4>Project didnt created please retry or contact coordinator</h4>';
+}
+//if (has_errors()) {
+	//throw new moodle_exception('Cannot proceed, errors were detected.');
+//}
 
 $enrollement1 = enrol_try_internal_enrol($course->id, $recorduserid, $recordUserRoleId, 0, 0);
 $enrollement2 = enrol_try_internal_enrol($course->id, $newuserid , $userRoleId, 0, 0);
 
-
+//create object to pass project creation function
 $recordobj = new stdclass;
 $recordobj->id = $recordid;
-$recordobj->approved = 0;
+$recordobj->approved = 1;
 
 $DB->update_record('data_records', $recordobj, $bulk=false);
 
-if ($course) {
-echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
-}
 //if (has_errors()) {
-//	throw new moodle_exception('Cannot proceed, errors were detected.');
+	//throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');
 //}
 
-if (is_siteadmin()){
-
-	echo '<form><tr><td>hello</td></tr> </form>';
-
-}
-
-
-
-	echo "http://localhost/moodle/course/view.php?id={$course->id}";
 
 echo $OUTPUT->footer();
 

@@ -19,9 +19,6 @@ $dataid = required_param('dataid', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_TEXT);
 $recordtitle=required_param('recordtitle', PARAM_TEXT);
 
-echo "</br> userid is xxx $userid ";
-echo "</br> course $courseid data id $dataid  rid $recordid rt  $recordtitle ";
-
 $coursecontext = context_course::instance($courseid);
 //$recordtitle = $DB->get_field('data_content', 'content', array('recordid'=>$recordid), $strictness=IGNORE_MISSING);
 $recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
@@ -70,7 +67,7 @@ $mform->set_data($toform);
 // get new user id from the changed username if site admin or manager
 if (is_siteadmin() || $userroleid==1 ){
 	$newuserid = $DB->get_field('user', 'id', array('username'=>$changeusername), $strictness=IGNORE_MISSING);
-	echo 'ciste admin called xxxxxx';
+	
 } else {
 	$newuserid = $USER->id;
 }

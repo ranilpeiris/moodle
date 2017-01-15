@@ -1468,6 +1468,8 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
            		
             }
             
+            
+            
                        
             
             if (($template == 'singletemplate') && ($data->comments)) {
