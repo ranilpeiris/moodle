@@ -13,11 +13,14 @@ $PAGE->set_url('/mod/data/prepare_create_project.php');
 
 
 $username = $USER->username;
-$userrole = "";
+$userid = $USER->id;
 $recordid = required_param('recordid', PARAM_TEXT);
 $dataid = required_param('dataid', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_TEXT);
-$recordtitle=required_param('recordtitle', PARAM_TEXT);;
+$recordtitle=required_param('recordtitle', PARAM_TEXT);
+
+echo "</br> userid is xxx $userid ";
+echo "</br> course $courseid data id $dataid  rid $recordid rt  $recordtitle ";
 
 $coursecontext = context_course::instance($courseid);
 //$recordtitle = $DB->get_field('data_content', 'content', array('recordid'=>$recordid), $strictness=IGNORE_MISSING);
@@ -33,7 +36,10 @@ $projectsupervisor="";
 echo $OUTPUT->header();
 //echo $OUTPUT->heading($strdataplural, 2);
 
-if (is_siteadmin()){
+
+$userroleid = getuserroleid($userid, $coursecontext);
+	
+if (is_siteadmin() || $userroleid==1){
 
 	//form for change user
 	//Instantiate simplehtml_form
@@ -111,11 +117,11 @@ if ($newuserid==""  ){
 } elseif ($recordUserRoleId==$userRoleId) {
 	echo " cannot proceed! You have selected same type of users";;
 }else{
-	echo "Title for the new project: $recordtitle </br> ";
+	echo "Title for the new project: <H4> $recordtitle </H4> </br> ";
 	echo "The idea proposed by: $recordusername  </br> ";
 	echo "The idea will selected by: $newusername  </br> ";
-	echo " The project supervisor:$projectsupervisor </br>";
-	echo " The project student   :$projectstudent </br>";
+	echo " <h4> <span style='color:black' > The project supervisor:</span> $projectsupervisor<h4> </br>";
+	echo " <h4> <span style='color:black' > The project student   :</span> $projectstudent </H4> </br>";
 	//edit by Ranil
 	echo '<form action="http://localhost/moodle/mod/data/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
@@ -142,6 +148,20 @@ echo '<form action="http://localhost/moodle/mod/data/view.php" method="post">
  
 
 echo $OUTPUT->footer();
+
+//Rnil new function section
+//return the role of the user on course context
+/** function getuserroleid($userid, $coursecontext){
+	if ($roles = get_user_roles($coursecontext,$userid)) {
+		foreach ($roles as $role) {
+			$userRoleId = $role->roleid; //role id of the user on the course
+		}
+		return  $userRoleId;
+	}
+}
+/*
+
+
 
 
 

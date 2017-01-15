@@ -6,20 +6,28 @@ class changeuser_form extends moodleform {
 	public function definition() {
 		global $CFG;
 		global $DB;
+		global $USER;
 		
 		$recordid = $this->_customdata['recordid'];
 		$dataid = $this->_customdata['dataid'];
 		$courseid = $this->_customdata['courseid'];
 		$recordtitle = $this->_customdata['recordtitle'];
 		
-				
-		$userlist = $DB->get_records_sql('SELECT {user}.username FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));
 		
-		$usernames = array_map(create_function('$o', 'return $o->username;'), $userlist);
+		echo "The selected idea : <h3> $recordtitle </h3></br>";
 		
-		
-		//		$userlist = $DB->get_records_sql('SELECT DISTINCT {user_enrolments}.userid, {user}.username , {enrol}.courseid FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));
-		
+		//get list of users in this course
+		$userlist = $DB->get_records_sql('SELECT {user}.username, {user}.firstname, {user}.lastname FROM {course} 
+										JOIN {context} ON {course}.id = {context}.instanceid
+										JOIN {role_assignments} ON {role_assignments}.contextid = {context}.id
+										JOIN {user} ON {user}.id = {role_assignments}.userid
+										JOIN {role} ON {role}.id = {role_assignments}.roleid
+										where {course}.id = ? ' , array($courseid));
+												
+	
+		// create and call to a function that accept array of recors and combine columns 
+		$usernames = array_map(create_function('$o', '$userdetail= "$o->username : $o->firstname $o->lastname";   return $userdetail;'), $userlist);
+			
 		$mform = $this->_form; // Don't forget the underscore!
 		/////
 		$mform->registerNoSubmitButton('addotags');
@@ -43,8 +51,7 @@ class changeuser_form extends moodleform {
 		$mform->setType('recordtitle', PARAM_TEXT);
 		$mform->setDefault('recordtitle',$recordtitle);
 		////
-		echo " recordid is $recordid";
-		
+	
 		
 	}
 	
