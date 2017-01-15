@@ -42,9 +42,9 @@ $userroleid = getuserroleid($userid, $coursecontext);
 if (is_siteadmin() || $userroleid==1){
 
 	//form for change user
-	//Instantiate simplehtml_form
-	$userlist = $DB->get_records_sql('SELECT DISTINCT {user}.username FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));	
-	$usernames = array_map(create_function('$o', 'return $o->username;'), $userlist);
+	//Instantiate the form
+	// ?$userlist = $DB->get_records_sql('SELECT DISTINCT {user}.username FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));	
+    // ?$usernames = array_map(create_function('$o', 'return $o->username;'), $userlist);
 	
 $mform = new changeuser_form( null, array('recordid'=>$recordid, 'dataid'=>$dataid ,'courseid'=>$courseid,'recordtitle'=>$recordtitle ));//name of the form you defined in file above.
 	//default 'action' for form is strip_querystring(qualified_me())
@@ -52,14 +52,12 @@ $mform = new changeuser_form( null, array('recordid'=>$recordid, 'dataid'=>$data
 $mform->set_data($toform);
 	
 	if ($mform->no_submit_button_pressed()) {
-		$changeusername=$mform->get_submit_value('otagsadd');
+		$changeusername=$mform->get_submit_value('otagsadd'); //get value from no submit button through the function
 		//you need this section if you have a 'submit' button on your form
 		//which performs some kind of subaction on the form and not a full
-		//form submission.
+		//form submission. This \
 		//*******
-	}
-	
-	
+	}	
 	$mform->display();
 }
 
@@ -69,9 +67,10 @@ $mform->set_data($toform);
 
 
 //ranil check user roles
-
-if (is_siteadmin()){
+// get new user id from the changed username if site admin or manager
+if (is_siteadmin() || $userroleid==1 ){
 	$newuserid = $DB->get_field('user', 'id', array('username'=>$changeusername), $strictness=IGNORE_MISSING);
+	echo 'ciste admin called xxxxxx';
 } else {
 	$newuserid = $USER->id;
 }
@@ -91,8 +90,7 @@ if ($roles = get_user_roles($coursecontext, $recorduserid)) {
 
 $newusername= $DB->get_field('user', 'username', array('id'=> $newuserid), $strictness=IGNORE_MISSING);
 
-
-
+//set user roles for new userid and recorduserid
 if ($recordUserRoleId==5){
 	$projectstudent = $recordusername;
 }
@@ -117,11 +115,16 @@ if ($newuserid==""  ){
 } elseif ($recordUserRoleId==$userRoleId) {
 	echo " cannot proceed! You have selected same type of users";;
 }else{
-	echo "Title for the new project: <H4> $recordtitle </H4> </br> ";
+	
+	// User details
+	$recoruserdetails = $DB->get_record_sql('SELECT firstname, Lastname FROM {user} WHERE username = ?', array($recordusername));
+	$newuserdetails = $DB->get_record_sql('SELECT firstname, Lastname FROM {user} WHERE username = ?', array($newusername));
+		 
+	echo "<h5> <span style='color:black'> Title for the new project:</span> $recordtitle </H5>  ";
 	echo "The idea proposed by: $recordusername  </br> ";
 	echo "The idea will selected by: $newusername  </br> ";
-	echo " <h4> <span style='color:black' > The project supervisor:</span> $projectsupervisor<h4> </br>";
-	echo " <h4> <span style='color:black' > The project student   :</span> $projectstudent </H4> </br>";
+	echo " <h5> <span style='color:black' > The project supervisor:</span> $projectsupervisor : $recoruserdetails->firstname  $recoruserdetails->lastname <h5> ";
+	echo " <h5> <span style='color:black' > The project student   :</span> $projectstudent : $newuserdetails->firstname  $newuserdetails->lastname</H5> </br>";
 	//edit by Ranil
 	echo '<form action="http://localhost/moodle/mod/data/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
@@ -151,15 +154,6 @@ echo $OUTPUT->footer();
 
 //Rnil new function section
 //return the role of the user on course context
-/** function getuserroleid($userid, $coursecontext){
-	if ($roles = get_user_roles($coursecontext,$userid)) {
-		foreach ($roles as $role) {
-			$userRoleId = $role->roleid; //role id of the user on the course
-		}
-		return  $userRoleId;
-	}
-}
-/*
 
 
 

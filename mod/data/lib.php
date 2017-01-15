@@ -1449,7 +1449,6 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
            				$sql="SELECT {data_content}.content  FROM {data_content} , {data_fields} where {data_content}.fieldid = {data_fields}.id AND {data_content}.recordid = ? order by {data_content}.fieldid ASC LIMIT 1";
            				$recordtitle = $DB->get_field_sql($sql, array ($recordid), $strictness=IGNORE_MISSING);
 
-            echo "</br> xxxxx cid  $courseid, did $dataid, rid $recordid";
             
             $approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
             $nofapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=1', array($dataid, $USER->id));

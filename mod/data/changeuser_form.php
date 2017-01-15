@@ -14,7 +14,7 @@ class changeuser_form extends moodleform {
 		$recordtitle = $this->_customdata['recordtitle'];
 		
 		
-		echo "The selected idea : <h3> $recordtitle </h3></br>";
+		echo "The selected idea : <h5> $recordtitle </h5></br>";
 		
 		//get list of users in this course
 		$userlist = $DB->get_records_sql('SELECT {user}.username, {user}.firstname, {user}.lastname FROM {course} 
@@ -22,7 +22,7 @@ class changeuser_form extends moodleform {
 										JOIN {role_assignments} ON {role_assignments}.contextid = {context}.id
 										JOIN {user} ON {user}.id = {role_assignments}.userid
 										JOIN {role} ON {role}.id = {role_assignments}.roleid
-										where {course}.id = ? ' , array($courseid));
+										where {course}.id = ?' , array($courseid));
 												
 	
 		// create and call to a function that accept array of recors and combine columns 
@@ -37,7 +37,7 @@ class changeuser_form extends moodleform {
 		$mform->addGroup($otagsgrp, 'otagsgrp', 'New user for project ', array(' '), false);
 		$mform->setType('otagsadd', PARAM_NOTAGS);
 			
-		
+		//add parameters to pass
 		$mform->addElement('hidden', 'recordid', $recordid);
 		$mform->setType('recordid', PARAM_TEXT);
 		$mform->setDefault('recordid',$recordid);
@@ -54,6 +54,8 @@ class changeuser_form extends moodleform {
 	
 		
 	}
+	
+	//to enable button press to submit
 	
 	function get_submit_value($elementname) {
 		$mform = & $this->_form;
