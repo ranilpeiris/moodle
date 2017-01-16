@@ -13,7 +13,7 @@ $PAGE->set_url('/mod/data/create_project.php');
 
 // for course creation
 $ideatitle = required_param( 'ideatitle', PARAM_TEXT); // Short name and long name of the new course
-$categoryid = required_param('categoryid', PARAM_TEXT); // category of new course
+//$categoryid = required_param('categoryid', PARAM_TEXT); // category of new course
 $maincourseid = required_param('maincourseid', PARAM_TEXT);// category of new course
 
 //for udate record as selected
@@ -24,15 +24,7 @@ $dataid = required_param('dataid', PARAM_TEXT);
 $studentuserid = required_param('studentid', PARAM_TEXT);
 $supervisoruserid = required_param('supervisorid', PARAM_TEXT);
 
-
-//$coursecontext = context_course::instance($maincourseid);
-$coursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
-
-
-//$recorduserid = required_param('recorduserid', PARAM_TEXT);
-
-//$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
-//$approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
+$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
 
 
 
@@ -44,7 +36,7 @@ echo $OUTPUT->header();
 $data = array(
 		'shortname' => $ideatitle,
 		'fullname' => $ideatitle,
-		'category' => $categoryid,
+		'category' => $maincoursecategory,
 );
 
 

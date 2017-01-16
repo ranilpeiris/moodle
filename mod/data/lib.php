@@ -38,6 +38,7 @@ define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 define('DATA_PRESET_COMPONENT', 'mod_data');
 define('DATA_PRESET_FILEAREA', 'site_presets');
 define('DATA_PRESET_CONTEXT', SYSCONTEXTID);
+require_once("changeuser_form.php");
 
 // Users having assigned the default role "Non-editing teacher" can export database records
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
@@ -1445,32 +1446,56 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
            				$courseid=$data->course;
            				$dataid = $data->id;
            				$recordid = $record->id;
-
+           				$userid = $USER->id;
+           				
            				//get record title
            				$sql="SELECT {data_content}.content  FROM {data_content} , {data_fields} where {data_content}.fieldid = {data_fields}.id AND {data_content}.recordid = ? order by {data_content}.fieldid ASC LIMIT 1";
            				$recordtitle = $DB->get_field_sql($sql, array ($recordid), $strictness=IGNORE_MISSING);
+           				$coursecontext = context_course::instance($courseid);
+           				$recorduserid = $DB->get_field('data_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
 
+           				$usertype = getanyuserroleid($coursecontext,$userid);
+           				$recordusertype = getanyuserroleid($coursecontext,$recorduserid);
+           				 
+           				
+           				//check is idea approved
+           				$approvedmessage="";
+           				if ($DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
+            			$approvedmessage='<h6> This idea already selected</h6>';
+           				}
+           				//check wether user has maximum number of ideas
+           				$userapprovedideasmessage="";   				
+            			$userapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=1', array($dataid, $userid));
+            			if ($usertype==5 && $userapprovedideas >= 1 ){
+            				$userapprovedideasmessage = '<h6> You have selected maximum number of idea</h6>';
+            			}
+            			
+            			// check wether publisher (record user) has maximum number of ideas
+            			$recorduserapprovedideasmessage="";
+            			$recorduserapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=1', array($dataid, $recorduserid));
+            			if ($recordusertype==5 && $recorduserapprovedideas >= 1 ){
+            				$recorduserapprovedideasmessage = '<h6>Publisher of this idea have selected maximum number of idea</h6>';
+            			}
+            			     
+            			           			
+            			//check is user type are equal            			
+            			$usertypematchmessage ="";
+            			if (getcustomrolename($usertype) == getcustomrolename($recordusertype)){ // Check user types of user and idea publisher
+            				$usertypematchmessage= "<h6>This has published by another ". getcustomrolename(getanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
+            			}
+            			$normalusermessage ="";
+            			$normalusermessage = $approvedmessage . $usertypematchmessage. $userapprovedideasmessage . $recorduserapprovedideasmessage   ;
+            		    
+            		    //check is there any constrain to create project file for start processing
+			            if ($normalusermessage == "") {
+			            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='.$data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
+			            	// echo "test course id $data->course";
+			            	} else {
+			           			echo "</br> <h5> You can not select this idea </h5> reasons are:". $normalusermessage . "</br>";
+			           		}
+			            }
             
-            $approved= $DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING);
-            $nofapprovedideas= $DB->count_records_sql( 'SELECT count(*) FROM {data_records} WHERE {data_records}.dataid=? and {data_records}.userid=? and {data_records}.approved=1', array($dataid, $USER->id));
-            
-            $isideaselectionok= isIdeaSelectionOk($courseid,$dataid,$recordid,$approved,$nofapprovedideas);
-            
-            
-            //call to create project file for start processing
-            if ($isideaselectionok=='ok') {
-            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='.$data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
-            	// echo "test course id $data->course";
-            	echo 'courseid='.$data->course .'&dataid='.$data->id.'&recordid='.$record->id.'';
-           		} else 
-           		{
-           		echo "You can not select this idea: $isideaselectionok ";
-           		}
-           		
-            }
-            
-            
-            
+			            
                        
             
             if (($template == 'singletemplate') && ($data->comments)) {
@@ -4171,27 +4196,32 @@ function isIdeaSelectionOk($courseid, $dataid, $recordid , $approved ,$nofapprov
 		return "ok";
 	}
 	
+	
+	
+	
 }
 
+
 	
-function setrecordusertype($recordUserRoleId) {
-	if ($recordUserRoleId==4 || $recordUserRoleId==3 ||$recordUserRoleId==1 ) {
-		return "since this has published by another Teacher"; 
-		}elseif ($recordUserRoleId==5){
-		return "since this has published by another Student";
+function getcustomrolename($anyUserRoleId) {
+	if ($anyUserRoleId==4 || $anyUserRoleId==3 || $anyUserRoleId==1 ) {
+		return "Teacher"; 
+		}elseif ($anyUserRoleId==5){
+		return "Student";
 	}	
 }
 
 
- function getuserroleid($userid, $coursecontext){
-	if ($roles = get_user_roles($coursecontext,$userid)) {
+ function getanyuserroleid($coursecontext,$anyuserid){
+	if ($roles = get_user_roles($coursecontext,$anyuserid)) {
 		foreach ($roles as $role) {
-		$userRoleId = $role->roleid; //role id of the user on the course
+		$anyuserRoleId = $role->roleid; //role id of the user on the course
 		}
-		return  $userRoleId;
+		return  $anyuserRoleId;
 	}
 }
 
+/**
 function getrecordUserRoleId ($recorduserid, $coursecontext){
 	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
 		foreach ($roles as $role) {
@@ -4199,4 +4229,4 @@ function getrecordUserRoleId ($recorduserid, $coursecontext){
 		}
 		return  $recordUserRoleId;
 	}
-}
+}*/
