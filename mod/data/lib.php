@@ -1445,7 +1445,8 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
            				$courseid=$data->course;
            				$dataid = $data->id;
            				$recordid = $record->id;
-           				//$recordtitle = $DB->get_records_sql('SELECT {data_content}.fieldid  FROM {data_content} , {data_fields } where {data_content}.fieldid = {data_fields}.id AND {data_content}.recordid = ? order by {data_content}.fieldid ASC LIMIT 1 ' , array(  31) );
+
+           				//get record title
            				$sql="SELECT {data_content}.content  FROM {data_content} , {data_fields} where {data_content}.fieldid = {data_fields}.id AND {data_content}.recordid = ? order by {data_content}.fieldid ASC LIMIT 1";
            				$recordtitle = $DB->get_field_sql($sql, array ($recordid), $strictness=IGNORE_MISSING);
 
@@ -1458,7 +1459,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             
             //call to create project file for start processing
             if ($isideaselectionok=='ok') {
-            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='. $data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
+            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='.$data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
             	// echo "test course id $data->course";
             	echo 'courseid='.$data->course .'&dataid='.$data->id.'&recordid='.$record->id.'';
            		} else 

@@ -26,8 +26,12 @@ class changeuser_form extends moodleform {
 												
 	
 		// create and call to a function that accept array of recors and combine columns 
-		$usernames = array_map(create_function('$o', '$userdetail= "$o->username : $o->firstname $o->lastname";   return $userdetail;'), $userlist);
-			
+		$usernames = array_map(create_function('$o','return $o->username;' ), $userlist);
+		
+		//<>for full name $usernames = array_map(create_function('$o', '$userdetail= "$o->username : $o->firstname $o->lastname";   return $userdetail;'), $userlist);
+		
+		
+		
 		$mform = $this->_form; // Don't forget the underscore!
 		/////
 		$mform->registerNoSubmitButton('addotags');

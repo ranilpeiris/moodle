@@ -6,9 +6,6 @@ require_once("changeuser_form.php");
 global $USER;
 global $DB;
 
-$changeusername="";
-$toform="";
-
 $PAGE->set_url('/mod/data/prepare_create_project.php');
 
 
@@ -26,25 +23,23 @@ $coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $
 $recordusername= $DB->get_field('user', 'username', array('id'=> $recorduserid), $strictness=IGNORE_MISSING);
 //$approved= $DB->get_field(data_records, approved, array('id'=> $recordid), $strictness=IGNORE_MISSING);
 
-$projectstudent="";
-$projectsupervisor="";
+//$projectstudent="";
+//$projectsupervisor="";
 
 
 echo $OUTPUT->header();
 //echo $OUTPUT->heading($strdataplural, 2);
+echo "xxxxxxxxxxxxxxxxxxxxxxxxxx $courseid <br/>";
 
-
+//get the current user role id
 $userroleid = getuserroleid($userid, $coursecontext);
-	
+
+/**
+// call to change user form to select a new user if user is a manager or admin
 if (is_siteadmin() || $userroleid==1){
 
-	//form for change user
-	//Instantiate the form
-	// ?$userlist = $DB->get_records_sql('SELECT DISTINCT {user}.username FROM {user_enrolments} , {enrol} , {user} where {enrol}.courseid= ? and {user}.id = {user_enrolments}.userid' , array(2));	
-    // ?$usernames = array_map(create_function('$o', 'return $o->username;'), $userlist);
-	
+// go to change form	
 $mform = new changeuser_form( null, array('recordid'=>$recordid, 'dataid'=>$dataid ,'courseid'=>$courseid,'recordtitle'=>$recordtitle ));//name of the form you defined in file above.
-	//default 'action' for form is strip_querystring(qualified_me())
 
 $mform->set_data($toform);
 	
@@ -60,33 +55,31 @@ $mform->set_data($toform);
 
 // end change user form
 
+*/
 
 
-
-//ranil check user roles
 // get new user id from the changed username if site admin or manager
-if (is_siteadmin() || $userroleid==1 ){
-	$newuserid = $DB->get_field('user', 'id', array('username'=>$changeusername), $strictness=IGNORE_MISSING);
-	
+if (is_siteadmin() || getuserroleid($userid, $coursecontext)==1 ){
+	$newuserid = $DB->get_field('user', 'id', array('username'=>$changeusername), $strictness=IGNORE_MISSING);	
 } else {
 	$newuserid = $USER->id;
 }
 
-if ($roles = get_user_roles($coursecontext, $newuserid)) {
-	foreach ($roles as $role) {
-		$userRoleId = $role->roleid;
-		}
-	}
 
+
+
+/**	
 if ($roles = get_user_roles($coursecontext, $recorduserid)) {
 	foreach ($roles as $role) {
 		$recordUserRoleId = $role->roleid;
 	}
 }
+*/
 
 
-$newusername= $DB->get_field('user', 'username', array('id'=> $newuserid), $strictness=IGNORE_MISSING);
 
+
+/**
 //set user roles for new userid and recorduserid
 if ($recordUserRoleId==5){
 	$projectstudent = $recordusername;
@@ -101,39 +94,79 @@ if ($userRoleId==5){
 if ($userRoleId==4 || $userRoleId==3 || $userRoleId==1){
 	$projectsupervisor = $newusername;
 }
-
+*/
 
 
 //ranil check wether the user has selected
 
-
+/**  to be activate
 if ($newuserid==""  ){
 	echo " cannot proceed! You have not selected a user to change";
-} elseif ($recordUserRoleId==$userRoleId) {
-	echo " cannot proceed! You have selected same type of users";;
-}else{
+} elseif ($recordUserRoleId==$userRoleId ) {
+	echo " cannot proceed! You have selected same type of users";
+}elseif ( ($recordUserRoleId==1 && ($userRoleId==3 ||$userRoleId==4)) ||($userRoleId==1 && ($recordUserRoleId==3 ||$recordUserRoleId==4))    ) {
+	echo " cannot proceed! You have selected same teacher type of users";;
+}
+*/
+
+
+if ($newuserid<>""){
 	
 	// User details
+	
+	echo  "new user xxx id $newuserid";
+	echo "user id xxxxxxx  $recorduserid";
+	
+	$newusername= $DB->get_field('user', 'username', array('id'=> $newuserid), $strictness=IGNORE_MISSING);
 	$recoruserdetails = $DB->get_record_sql('SELECT firstname, Lastname FROM {user} WHERE username = ?', array($recordusername));
 	$newuserdetails = $DB->get_record_sql('SELECT firstname, Lastname FROM {user} WHERE username = ?', array($newusername));
-		 
+     
+	$newuserrole = getnewuserrole($coursecontext,$newuserid);
+	$recorduserrole = getrecorduserrole($coursecontext,$recorduserid);
+	
+	if ($newuserrole == 5 ) {
+		$studentid = $newuserid;
+		}elseif ($newuserrole == 4 || $newuserrole == 3 || $newuserrole == 1){
+			$supervisorid = $newuserid;
+		}
+		
+	if ($recorduserrole == 5 ) {
+			$studentid = $recorduserid;
+		} elseif ($recorduserrole == 4 || $recorduserrole == 3 || $recorduserrole == 1){
+		$supervisorid = $recorduserid;
+	}
+	
+	
+	$supervisordetails = $DB->get_record_sql('SELECT username, firstname, Lastname FROM {user} WHERE id = ?', array($supervisorid));
+	$studentdetails = $DB->get_record_sql('SELECT username, firstname, Lastname FROM {user} WHERE id = ?', array($studentid));
+	 
+	
+	
+	
 	echo "<h5> <span style='color:black'> Title for the new project:</span> $recordtitle </H5>  ";
 	echo "The idea proposed by: $recordusername  </br> ";
 	echo "The idea will selected by: $newusername  </br> ";
-	echo " <h5> <span style='color:black' > The project supervisor:</span> $projectsupervisor : $recoruserdetails->firstname  $recoruserdetails->lastname <h5> ";
-	echo " <h5> <span style='color:black' > The project student   :</span> $projectstudent : $newuserdetails->firstname  $newuserdetails->lastname</H5> </br>";
+	echo " <h5> <span style='color:black' > The project supervisor:</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
+	echo " <h5> <span style='color:black' > The project student   :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
 	//edit by Ranil
 	echo '<form action="http://localhost/moodle/mod/data/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
-            			<input type="hidden" name="categoryid" value="'.$coursecategory.'" />
-            			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
+            			<input type="hidden" name="maincourseid" value="'.$courseid.'" />         			
+            					
             			<input type="hidden" name="dataid" value="'.$dataid.'" />
             			<input type="hidden" name="recordid" value="'.$recordid.'" />
-            			<input type="hidden" name="recordUserRoleId" value="'.$recordUserRoleId.'" />
-            			<input type="hidden" name="userRoleId" value="'.$userRoleId.'" />		
-            			<input type="hidden" name="newuserid" value="'.$newuserid.'" />
             			
-            			<input type="hidden" name="recorduserid" value="'.$recorduserid.'" />
+            			//new 
+						<input type="hidden" name="studentid" value="'.$studentid.'" />
+            			<input type="hidden" name="supervisorid" value="'.$supervisorid.'" />
+            					
+            			
+            			/**to remove		
+            			//<input type="hidden" name="recordUserRoleId" value="'.$recordUserRoleId.'" />
+            			//<input type="hidden" name="userRoleId" value="'.$userRoleId.'" />		
+            			//<input type="hidden" name="newuserid" value="'.$newuserid.'" />
+            			//<input type="hidden" name="categoryid" value="'.$coursecategory.'" />
+            			//<input type="hidden" name="recorduserid" value="'.$recorduserid.'" />
          
             			<input type="submit" value="Confirm Create project">
             			</form>';
@@ -149,12 +182,28 @@ echo '<form action="http://localhost/moodle/mod/data/view.php" method="post">
 
 echo $OUTPUT->footer();
 
-//Rnil new function section
-//return the role of the user on course context
+// check is the new user id is who
 
 
+function getnewuserrole($coursecontext, $newuserid) {
+	if ($roles = get_user_roles($coursecontext, $newuserid)) {
+		foreach ($roles as $role) {
+			$uroleId = $role->roleid;
+		}
+		return $uroleId;
+}
+}
 
 
+function getrecorduserrole($coursecontext, $recorduserid)
+{
+	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
+		foreach ($roles as $role) {
+			$uroleId = $role->roleid;
+		}
+		return $uroleId;
+	}
+}
 
 
 
