@@ -34,7 +34,16 @@
     $mode = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
     $filter = optional_param('filter', 0, PARAM_BOOL);
     // search filter will only be applied when $filter is true
+    
+    
+    // ranil optional param
+    $approvedidea = optional_param('approvedidea', '', PARAM_INT);
+    $avilableidea = optional_param('avilableidea', '', PARAM_INT);
+    $supervisoridea = optional_param('supervisoridea', '', PARAM_INT);
+    $studentidea = optional_param('studentidea', '', PARAM_INT);
 
+    
+    
     $edit = optional_param('edit', -1, PARAM_BOOL);
     $page = optional_param('page', 0, PARAM_INT);
 /// These can be added to perform an action on a record
@@ -44,6 +53,11 @@
     $multidelete = optional_param_array('delcheck', null, PARAM_INT);
     $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
+ 
+    
+    
+    
+    
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             print_error('invalidcoursemodule');
@@ -581,9 +595,32 @@ if ($showactivity) {
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = :dataid
                          AND r.userid = u.id ';
+                  
             $params['dataid'] = $data->id;
             $sortorder = " ORDER BY $ordering, r.id $order";
             $searchselect = '';
+            
+            //TODO add custom filter
+            //TODO ranil
+            
+            $customfiletrwhere = "";
+             
+            if ($approvedidea = 1 && $avilableidea == "" && $supervisoridea==1 &&  $studentidea==1){
+            	$customfiletrwhere = "AND r.approved = 1 ";
+            	$where = $where . $customfiletrwhere;
+            	            	
+            }elseif ($approvedidea = "" && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==1){
+            	$customfiletrwhere = "AND r.approved = 0 ";
+            	$where = $where . $customfiletrwhere;
+            	            	
+            }
+             
+            
+
+            
+            
+            
+            
 
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
@@ -630,6 +667,9 @@ if ($showactivity) {
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = :dataid
                          AND r.userid = u.id ';
+            
+                       
+            
             if (!$advanced) {
                 $where .=  'AND c.fieldid = :sort';
             }
@@ -638,13 +678,25 @@ if ($showactivity) {
             $sortorder = ' ORDER BY sortorder '.$order.' , r.id ASC ';
             $searchselect = '';
 
+            
+            
+            
+            //TODO show out temp
+            echo "from form xxxx  $avilableidea";
+            echo  "xxx 1 0 1 1 $approvedidea . $avilableidea . $supervisoridea . $studentidea";
+            echo "</br> xxxxxx customfilter $where ";
+            
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
                 $where .= ' AND u.id = :myid2';
                 $entrysql = ' AND r.userid = :myid3';
                 $params['myid2'] = $USER->id;
                 $initialparams['myid3'] = $params['myid2'];
-            }
+            } //TODO ranil
+            
+           
+            
+            
             $i = 0;
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
@@ -660,7 +712,7 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
-                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";  
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
                 $params['search3'] = "%$search%";
@@ -798,6 +850,9 @@ if ($showactivity) {
 
             } else {                                  // List template
                 $baseurl = 'view.php?d='.$data->id.'&amp;';
+               
+                
+                
                 //send the advanced flag through the URL so it is remembered while paging.
                 $baseurl .= 'advanced='.$advanced.'&amp;';
                 if (!empty($search)) {
@@ -813,12 +868,25 @@ if ($showactivity) {
                     data_generate_default_template($data, 'listtemplate', 0, false, false);
                 }
                 echo $data->listtemplateheader;
+                
+                // TODO add custom filter
+               
+                echo "from form xxxx  $approvedidea </br>";
+                
+                echo  "xxx 1 0 1 1 $approvedidea . $avilableidea . $supervisoridea . $studentidea";
+                
+                
+                
+                
                 data_print_template('listtemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
                 echo $data->listtemplatefooter;
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
             }
 
+           
+            
+            
             if ($mode != 'single' && $canmanageentries) {
                 echo html_writer::empty_tag('input', array(
                         'type' => 'button',

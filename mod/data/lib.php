@@ -38,7 +38,7 @@ define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 define('DATA_PRESET_COMPONENT', 'mod_data');
 define('DATA_PRESET_FILEAREA', 'site_presets');
 define('DATA_PRESET_CONTEXT', SYSCONTEXTID);
-require_once("changeuser_form.php");
+
 
 // Users having assigned the default role "Non-editing teacher" can export database records
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
@@ -628,6 +628,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $row = new html_table_row(array(get_string('authorlastname', 'data').': ', '##lastname##'));
             $row->attributes['class'] = 'searchcontrols';
             $table->data[] = $row;
+           
         }
 
         $str = '';
@@ -1723,9 +1724,30 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
+    
+   
+    //TODO ranil
+       
+    
+    echo '<form action="view.php?d='. $data->id .'" method="post">';
+    echo 'Matched Ideas';
+    echo '<input type="checkbox" name="approvedidea" value=1>';
+    echo 'Avilable ideas';
+    echo '<input type="checkbox" name="avilableidea" value=1>';
+    echo 'Supervisor Ideas';
+    echo '<input type="checkbox" name="supervisoridea" value=1>';
+    echo 'Student Ideas';
+    echo '<input type="checkbox" name="studentidea" value=1>';
+    echo '<input type="submit" value="Filter data">';
+    echo '</form>';
+    
+    //TODO ranil
+    
     echo '<br /><div class="datapreferences">';
     echo '<form id="options" action="view.php" method="get">';
     echo '<div>';
+    
+    
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     if ($mode =='asearch') {
         $advanced = 1;
@@ -1736,6 +1758,8 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
     echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id' => 'pref_perpage', 'class' => 'custom-select'));
 
+    
+    
     if ($advanced) {
         $regsearchclass = 'search_none';
         $advancedsearchclass = 'search_inline';
@@ -1743,6 +1767,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $regsearchclass = 'search_inline';
         $advancedsearchclass = 'search_none';
     }
+    
     echo '<div id="reg_search" class="' . $regsearchclass . ' form-inline" >&nbsp;&nbsp;&nbsp;';
     echo '<label for="pref_search">' . get_string('search') . '</label> <input type="text" ' .
          'class="form-control" size="16" name="search" id= "pref_search" value="' . s($search) . '" /></div>';
@@ -1799,11 +1824,15 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $checked = '';
     }
     $PAGE->requires->js('/mod/data/data.js');
+    //TODO ranil
+    
     echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
     echo '&nbsp;<input type="hidden" name="filter" value="1" />';
+    
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
          'onchange="showHideAdvSearch(this.checked);" class="m-x-1" />' .
          '<label for="advancedcheckbox">' . get_string('advancedsearch', 'data') . '</label>';
+    
     echo '&nbsp;<input type="submit" class="btn btn-secondary" value="' . get_string('savesettings', 'data') . '" />';
 
     echo '<br />';

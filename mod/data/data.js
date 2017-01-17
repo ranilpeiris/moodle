@@ -43,6 +43,17 @@ function showHideAdvSearch(checked) {
     }
 }
 
+//TODO ranil
+
+function showHideAdvSearch(checked) {
+    var divs = document.getElementsByTagName('div');
+   
+}
+
+
+
+
+
 M.data_urlpicker = {};
 
 M.data_urlpicker.init = function(Y, options) {
