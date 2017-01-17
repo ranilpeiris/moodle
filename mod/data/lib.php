@@ -1730,16 +1730,17 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
        
     
     echo '<form action="view.php?d='. $data->id .'" method="post">';
-    echo 'Matched Ideas';
-    echo '<input type="checkbox" name="approvedidea" value=1>';
-    echo 'Avilable ideas';
-    echo '<input type="checkbox" name="avilableidea" value=1>';
-    echo 'Supervisor Ideas';
-    echo '<input type="checkbox" name="supervisoridea" value=1>';
-    echo 'Student Ideas';
-    echo '<input type="checkbox" name="studentidea" value=1>';
-    echo '<input type="submit" value="Filter data">';
+    echo '<table><td><td><input type="checkbox" name="avilableidea" value=1></td>';
+    echo '<td>Avilable ideas </td>   ';
+    echo '<td><input type="checkbox" name="approvedidea" value=1></td>';
+    echo '<td>Matched Ideas   </td>  ';
+    echo '<td><input type="checkbox" name="studentidea" value=1></td>';
+    echo '<td>Student Ideas </td>';
+    echo '<td><input type="checkbox" name="supervisoridea" value=1></td>';
+    echo '<td>Supervisor Ideas</td>';
+    echo '<td><input type="submit" value="Filter data"</td></th></table>';
     echo '</form>';
+    
     
     //TODO ranil
     
