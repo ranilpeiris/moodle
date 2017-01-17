@@ -613,7 +613,43 @@ if ($showactivity) {
             	$customfiletrwhere = "AND r.approved = 0 ";
             	$where = $where . $customfiletrwhere;
             	            	
+            }elseif ($approvedidea = 1 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==""){
+            	$customfiletrwhere = "AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
+            	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ; 
+            	$tables = $tables .$customtables;
+            	$where = $where . $customfiletrwhere;
+            	
+            }elseif ($approvedidea = 1 && $avilableidea == 1 && $supervisoridea=="" &&  $studentidea==1){
+            	$customfiletrwhere = "AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid AND co.id =". "$course->id" ." AND ro.id = 5";
+            	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ; 
+            	$tables = $tables .$customtables;
+            	$where = $where . $customfiletrwhere;
+            	
+            }elseif ($approvedidea = 1 && $avilableidea == "" && $supervisoridea==1 &&  $studentidea==""){
+            	$customfiletrwhere = "AND r.approved = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
+            	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            	$tables = $tables .$customtables;
+            	$where = $where . $customfiletrwhere;
+            	
+            }elseif ($approvedidea = 1 && $avilableidea == "" && $supervisoridea=="" &&  $studentidea==1){
+            	$customfiletrwhere = "AND r.approved = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
+            	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            	$tables = $tables .$customtables;
+            	$where = $where . $customfiletrwhere;
+            	
+            }elseif ($approvedidea = "" && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==""){
+            	$customfiletrwhere = "AND r.approved = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
+            	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            	$tables = $tables .$customtables;
+            	$where = $where . $customfiletrwhere;
+            }elseif ($approvedidea = "" && $avilableidea == 1 && $supervisoridea=="" &&  $studentidea==1){
+            	$customfiletrwhere = "AND r.approved = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
+            	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            	$tables = $tables .$customtables;
+            	$where = $where . $customfiletrwhere;
             }
+            	
+             
              
             
 
@@ -681,10 +717,8 @@ if ($showactivity) {
             
             
             
-            //TODO show out temp
-            echo "from form xxxx  $avilableidea";
-            echo  "xxx 1 0 1 1 $approvedidea . $avilableidea . $supervisoridea . $studentidea";
-            echo "</br> xxxxxx customfilter $where ";
+            //TODO show output temp area
+            
             
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
