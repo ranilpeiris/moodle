@@ -1724,20 +1724,18 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
-    
-   
-    //TODO ranil
        
+    //TODO ranil
+      
     
     echo '<form action="view.php?d='. $data->id .'" method="post">';
-    echo '<table><td><td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
-    echo '<td><input type="checkbox" name="approvedidea" value="1"'. ((isset($_POST['approvedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
+    echo '<table><td><td><input type="checkbox" name="approvedidea" value="1"'. ((isset($_POST['approvedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
+    echo '<td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
     echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';
     echo '<td><input type="checkbox" name="supervisoridea" value="1"'. ((isset($_POST['supervisoridea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Supervisor Ideas</td>';
     echo '<td><input type="submit" value="Filter data"</td></th></table>';
     echo '</form>';
     
-    echo ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "");
     
     //TODO ranil
     

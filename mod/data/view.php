@@ -603,8 +603,14 @@ if ($showactivity) {
             //TODO add custom filter
             //TODO ranil
             
+      
+            
             $customfiletrwhere = "";
-             
+            
+            if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
+            	
+            	$SESSION->dataprefs[$data->id]['advanced'] = 0;
+            	
             if ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
             	$customfiletrwhere = "AND r.approved = 1 ";
             	$where = $where . $customfiletrwhere;
@@ -625,7 +631,7 @@ if ($showactivity) {
             	$tables = $tables .$customtables;
             	$where = $where . $customfiletrwhere;
             	
-            }elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==""){
+            }elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==0){
             	$customfiletrwhere = "AND r.approved = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
             	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             	$tables = $tables .$customtables;
@@ -666,13 +672,14 @@ if ($showactivity) {
             	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             	$tables = $tables .$customtables;
             	$where = $where . $customfiletrwhere;
+            	
             }elseif ($approvedidea == 0 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==1){
             	$customfiletrwhere = " AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 4";
             	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             	$tables = $tables .$customtables;
             	$where = $where . $customfiletrwhere;
             }
-            	
+           }	
              
              
             
@@ -773,11 +780,18 @@ if ($showactivity) {
             }
         }
 
-    /// To actually fetch the records
+    /// ranil To actually fetch the records  check is any filter check box is checked
 
-        $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
-        $allparams  = array_merge($params, $advparams);
-
+        if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
+        	$fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
+        	$allparams  = array_merge(array(), $params);
+        	  
+        }else{
+        	$fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
+        	$allparams  = array_merge($params, $advparams);
+        }
+        
+        
         // Provide initial sql statements and parameters to reduce the number of total records.
         $initialselect = $groupselect . $approveselect . $entrysql;
 
@@ -823,6 +837,11 @@ if ($showactivity) {
         }
 
     /// Get the actual records
+    
+        //TODO  ranil
+        
+        
+        
 
         if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
             // Nothing to show!
