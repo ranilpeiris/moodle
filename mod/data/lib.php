@@ -1730,17 +1730,14 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
        
     
     echo '<form action="view.php?d='. $data->id .'" method="post">';
-    echo '<table><td><td><input type="checkbox" name="avilableidea" value=1></td>';
-    echo '<td>Avilable ideas </td>   ';
-    echo '<td><input type="checkbox" name="approvedidea" value=1></td>';
-    echo '<td>Matched Ideas   </td>  ';
-    echo '<td><input type="checkbox" name="studentidea" value=1></td>';
-    echo '<td>Student Ideas </td>';
-    echo '<td><input type="checkbox" name="supervisoridea" value=1></td>';
-    echo '<td>Supervisor Ideas</td>';
+    echo '<table><td><td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
+    echo '<td><input type="checkbox" name="approvedidea" value="1"'. ((isset($_POST['approvedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
+    echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';
+    echo '<td><input type="checkbox" name="supervisoridea" value="1"'. ((isset($_POST['supervisoridea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Supervisor Ideas</td>';
     echo '<td><input type="submit" value="Filter data"</td></th></table>';
     echo '</form>';
     
+    echo ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "");
     
     //TODO ranil
     
