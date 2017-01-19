@@ -53,11 +53,7 @@
     $multidelete = optional_param_array('delcheck', null, PARAM_INT);
     $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
- 
-    //todo
-    //todo
-    //todo ranil 
-    
+   
    
     
     if ($id) {
@@ -620,8 +616,6 @@ if ($showactivity) {
             
             if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
             	
-            	//$SESSION->dataprefs[$data->id]['advanced'] = 0;
-            	
             if ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
             	$customfiletrwhere = "AND r.approved = 1 ";
             	$where = $where . $customfiletrwhere;
@@ -794,16 +788,7 @@ if ($showactivity) {
     /// ranil To actually fetch the records  check is any filter check box is checked
     // the first elseif added second only was defualt
 
-        /**if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
-        	$fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
-        	$allparams  = array_merge(array(), $params); // only use general array
-        	  
-        }else{
-        	$fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
-        	$allparams  = array_merge($params, $advparams);
-        }
-        */
-        
+               
         $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
         $allparams  = array_merge($params, $advparams);
         
