@@ -54,9 +54,11 @@
     $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
  
+    //todo
+    //todo
+    //todo ranil 
     
-    
-    
+   
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
@@ -116,6 +118,15 @@
     if (!isset($SESSION->dataprefs)) {
         $SESSION->dataprefs = array();
     }
+    
+    
+ // ranil todo if any custom filter chekbox is checked, the set all browsing prefrences to emapty   
+    
+    if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
+    	$SESSION->dataprefs = array();
+    }
+    
+    
     if (!isset($SESSION->dataprefs[$data->id])) {
         $SESSION->dataprefs[$data->id] = array();
         $SESSION->dataprefs[$data->id]['search'] = '';
@@ -609,7 +620,7 @@ if ($showactivity) {
             
             if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
             	
-            	$SESSION->dataprefs[$data->id]['advanced'] = 0;
+            	//$SESSION->dataprefs[$data->id]['advanced'] = 0;
             	
             if ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
             	$customfiletrwhere = "AND r.approved = 1 ";
@@ -781,15 +792,20 @@ if ($showactivity) {
         }
 
     /// ranil To actually fetch the records  check is any filter check box is checked
+    // the first elseif added second only was defualt
 
-        if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
+        /**if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
         	$fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
-        	$allparams  = array_merge(array(), $params);
+        	$allparams  = array_merge(array(), $params); // only use general array
         	  
         }else{
         	$fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
         	$allparams  = array_merge($params, $advparams);
         }
+        */
+        
+        $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
+        $allparams  = array_merge($params, $advparams);
         
         
         // Provide initial sql statements and parameters to reduce the number of total records.
