@@ -679,7 +679,7 @@ if ($showactivity) {
             	$where = $where . $customfiletrwhere;
             	
             }elseif ($approvedidea == 0 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==1){
-            	$customfiletrwhere = " AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 4";
+            	$customfiletrwhere = " AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
             	$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             	$tables = $tables .$customtables;
             	$where = $where . $customfiletrwhere;
@@ -942,12 +942,7 @@ if ($showactivity) {
                 echo $data->listtemplateheader;
                 
                 // TODO add custom filter
-               
-                echo "from form xxxx  $approvedidea </br>";
-                
-                echo  "xxxx $approvedidea . $avilableidea . $supervisoridea . $studentidea";
-                
-                
+          //the area to put test variable
                 
                 
                 data_print_template('listtemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));

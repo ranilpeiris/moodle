@@ -904,7 +904,7 @@ function data_add_record($data, $groupid=0){
         'objectid' => $record->id,
         'context' => $context,
         'other' => array(
-            'dataid' => $data->id
+        'dataid' => $data->id
         )
     ));
     $event->trigger();
@@ -1440,6 +1440,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
              *    Printing Comments Form       *
              *********************************/
            //TODO submit button was here
+           //TODO
             
             // Ranil - Add create course project button
             if ($template == 'singletemplate') {    //prints ratings options
@@ -1459,10 +1460,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
            				$recordusertype = getanyuserroleid($coursecontext,$recorduserid);
            				 
            				
+           				//Ranil Check is user  has manager rights
+           			
+           				
            				//check is idea approved
            				$approvedmessage="";
            				if ($DB->get_field('data_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
-            			$approvedmessage='<h6> This idea already selected</h6>';
+            			$approvedmessage='<h6> This idea already selected and project has created</h6>';
            				}
            				//check wether user has maximum number of ideas
            				$userapprovedideasmessage="";   				
@@ -1482,7 +1486,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             			//check is user type are equal            			
             			$usertypematchmessage ="";
             			if (getcustomrolename($usertype) == getcustomrolename($recordusertype)){ // Check user types of user and idea publisher
-            				$usertypematchmessage= "<h6>This has published by another ". getcustomrolename(getanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
+            				$usertypematchmessage= "<h6>&nbsp;This has published by another ". getcustomrolename(getanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
             			}
             			$normalusermessage ="";
             			$normalusermessage = $approvedmessage . $usertypematchmessage. $userapprovedideasmessage . $recorduserapprovedideasmessage   ;
@@ -1491,10 +1495,20 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 			            if ($normalusermessage == "") {
 			            	echo '<a href="http://localhost/moodle/mod/data/prepare_create_project.php?courseid='.$data->course .'&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
 			            	// echo "test course id $data->course";
-			            	} else {
-			           			echo "</br> <h5> You can not select this idea </h5> reasons are:". $normalusermessage . "</br>";
-			           		}
-			            }
+			            } else {
+			           			echo "<h5> As a ". getcustomrolename(getanyuserroleid( $coursecontext , $userid  )). "you can not select this idea </h5> reasons are:". $normalusermessage . "</br>";
+			           	}
+			           		
+			           	if ((getanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)) && $approvedmessage<>""){
+			           		echo "</br> <h5> Athough youre a manager You can not manage this idea since ; $approvedmessage  </h5>";
+			           		echo "As a manager you can change, procedure is: </br> ";
+			           		echo "1) Delete the course 2) Set the approve status to unapproved 3) Then come here </br>";      		
+			           	}elseif (getanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)){
+			           		echo '<a href="http://localhost/moodle/mod/data/manage_create_project.php?courseid='.$data->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&dataid='. $data->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Manage This Idea </a>';
+			           	}
+			           	
+			            
+             }
             
 			            
                        
@@ -1731,8 +1745,8 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<form action="view.php?d='. $data->id .'" method="post">';
     echo '<table><td><td><input type="checkbox" name="approvedidea" value="1"'. ((isset($_POST['approvedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
     echo '<td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
-    echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';
     echo '<td><input type="checkbox" name="supervisoridea" value="1"'. ((isset($_POST['supervisoridea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Supervisor Ideas</td>';
+    echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';
     echo '<td><input type="submit" value="Filter data"</td></th></table>';
     echo '</form>';
     

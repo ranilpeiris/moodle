@@ -12,27 +12,34 @@ class changeuser_form extends moodleform {
 		$dataid = $this->_customdata['dataid'];
 		$courseid = $this->_customdata['courseid'];
 		$recordtitle = $this->_customdata['recordtitle'];
-		
+		$recordusername= $this->_customdata['recordusername'];
+		$convertuserrole= $this->_customdata['convertuserrole'];
 		
 		echo "The selected idea : <h5> $recordtitle </h5></br>";
+		echo "Author of this idea : <h5> $recordusername </h5></br>";
 		
+		echo "convertuserrole xxx $convertuserrole";
+		
+			
 		//get list of users in this course
-		$userlist = $DB->get_records_sql('SELECT {user}.username, {user}.firstname, {user}.lastname FROM {course} 
-										JOIN {context} ON {course}.id = {context}.instanceid
-										JOIN {role_assignments} ON {role_assignments}.contextid = {context}.id
-										JOIN {user} ON {user}.id = {role_assignments}.userid
-										JOIN {role} ON {role}.id = {role_assignments}.roleid
-										where {course}.id = ?' , array($courseid));
-												
-	
+		if($convertuserrole=="Student"){
+		$userlist = $DB->get_records_sql('SELECT {user}.username, {user}.firstname ,{user}.lastname FROM {course}
+		JOIN {context}  ON {context}.instanceid = {course}.id JOIN {role_assignments}  ON {context}.id = {role_assignments}.contextid AND
+		{context}.contextlevel = 50 JOIN {role}  ON {role_assignments}.roleid = {role}.id JOIN {user}  ON {user}.id = {role_assignments}.userid WHERE {role}.id = 5 AND {course}.id = ?' , array($courseid));
+		}elseif($convertuserrole=="Supervisor"){
+			$userlist = $DB->get_records_sql('SELECT {user}.username, {user}.firstname ,{user}.lastname FROM {course}
+		JOIN {context}  ON {context}.instanceid = {course}.id JOIN {role_assignments}  ON {context}.id = {role_assignments}.contextid AND
+		{context}.contextlevel = 50 JOIN {role}  ON {role_assignments}.roleid = {role}.id JOIN {user}  ON {user}.id = {role_assignments}.userid WHERE ({role}.id = 4 OR {role}.id = 3 OR {role}.id = 1 ) AND {course}.id = ?' , array($courseid));
+			
+		}
+				
 		// create and call to a function that accept array of recors and combine columns 
 		$usernames = array_map(create_function('$o','return $o->username;' ), $userlist);
 		
 		//<>for full name $usernames = array_map(create_function('$o', '$userdetail= "$o->username : $o->firstname $o->lastname";   return $userdetail;'), $userlist);
 		
+		$mform = $this->_form; // Don't forget the underscore
 		
-		
-		$mform = $this->_form; // Don't forget the underscore!
 		/////
 		$mform->registerNoSubmitButton('addotags');
 		$otagsgrp = array();
