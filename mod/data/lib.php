@@ -1747,6 +1747,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
     echo '<td><input type="checkbox" name="supervisoridea" value="1"'. ((isset($_POST['supervisoridea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Supervisor Ideas</td>';
     echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';
+    echo '<td><input type="checkbox" name="myideas" value="1"'. ((isset($_POST['myideas'])) ? 'checked="checked"' : "") . ' onclick="submit()">My Ideas</td>';
     echo '<td><input type="submit" value="Filter data"</td></th></table>';
     echo '</form>';
     

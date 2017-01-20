@@ -50,6 +50,7 @@ $mform = new changeuser_form( null, array( 'convertuserrole'=>$convertuserrole,'
 
 //$mform->set_data($toform);
 
+
 if ($mform->no_submit_button_pressed()) {
 	$newusername=$mform->get_submit_value('otagsadd'); //get value from no submit button through the function
 }

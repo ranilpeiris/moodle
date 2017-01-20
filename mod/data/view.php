@@ -41,7 +41,8 @@
     $avilableidea = optional_param('avilableidea', 0 , PARAM_INT);
     $supervisoridea = optional_param('supervisoridea', 0, PARAM_INT);
     $studentidea = optional_param('studentidea', 0, PARAM_INT);
-
+    $myideas = optional_param('myideas', 0, PARAM_INT);
+    
     
     
     $edit = optional_param('edit', -1, PARAM_BOOL);
@@ -118,7 +119,7 @@
     
  // ranil todo if any custom filter chekbox is checked, the set all browsing prefrences to emapty   
     
-    if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
+    if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1 || $myideas ==1){
     	$SESSION->dataprefs = array();
     }
     
@@ -614,9 +615,27 @@ if ($showactivity) {
             
             $customfiletrwhere = "";
             
-            if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1){
+            if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1 ||$myideas ==1){
             	
-            if ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
+            	if($approvedidea == 0 && $avilableidea == 0 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1 ){
+            		$customfiletrwhere = "AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
+            		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            		$tables = $tables .$customtables;
+            		$where = $where . $customfiletrwhere;   
+            		
+            	} elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1  ){
+            		$customfiletrwhere = "AND r.approved = 1  AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
+            		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            		$tables = $tables .$customtables;
+            		$where = $where . $customfiletrwhere;
+            		
+            	} elseif ($approvedidea == 0 && $avilableidea == 1 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1  ){
+            		$customfiletrwhere = "AND r.approved = 0  AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
+            		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
+            		$tables = $tables .$customtables;
+            		$where = $where . $customfiletrwhere;
+            		
+            } elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
             	$customfiletrwhere = "AND r.approved = 1 ";
             	$where = $where . $customfiletrwhere;
             	            	
