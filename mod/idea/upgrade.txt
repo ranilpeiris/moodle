@@ -1,0 +1,7 @@
+This files describes API changes in /mod/idea - plugins,
+information provided here is intended especially for developers.
+
+=== 3.2 ===
+
+* New hook - update_content_import - Can be implemented by field subplugins idea_field_* class
+    This can be used to pre-process idea from a csv file before it is inserted into the ideabase.

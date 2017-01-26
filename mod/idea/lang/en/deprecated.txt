@@ -1,0 +1,12 @@
+namedate,mod_idea
+namefile,mod_idea
+namecheckbox,mod_idea
+namelatlong,mod_idea
+namemenu,mod_idea
+namemultimenu,mod_idea
+namenumber,mod_idea
+namepicture,mod_idea
+nameradiobutton,mod_idea
+nametext,mod_idea
+nametextarea,mod_idea
+nameurl,mod_idea
