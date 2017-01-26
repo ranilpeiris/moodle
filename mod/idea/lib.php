@@ -20,10 +20,11 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once("$CFG->libdir/coursecatlib.php");
 
 defined('MOODLE_INTERNAL') || die();
 
-// Some constants
+//TODO Some constants
 define ('idea_MAX_ENTRIES', 50);
 define ('idea_PERPAGE_SINGLE', 1);
 
