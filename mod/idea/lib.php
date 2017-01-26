@@ -1452,23 +1452,23 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             		
             	//Ranil Check is user  has manager rights
             	//check wether user has maximum number of ideas
-            	$userselectedideasmessage="";
+            	$usermatchedideasmessage="";
             	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-            	$userselectedideas = get_no_projects_per_user( $maincoursecategory ,  $userid );
+            	$usermatchedideas = get_no_projects_per_user( $maincoursecategory ,  $userid );
             	
             	            	
-            	if ($usertype==5 && $userselectedideas >= 2 ){
-            		$userselectedideasmessage = '<h6> You have already select an idea, Contact coordinator if you want to change</h6>';
+            	if ($usertype==5 && $usermatchedideas >= 2 ){
+            		$usermatchedideasmessage = '<h6> You have already select an idea, Contact coordinator if you want to change</h6>';
             	}
             	
             	// check wether publisher (record user) has maximum number of ideas
             	
-            	$recorduserselectedideasmessage="";
+            	$recordusermatchedideasmessage="";
             	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-            	$recorduserselectedideas = get_no_projects_per_user( $maincoursecategory ,  $recorduserid );
+            	$recordusermatchedideas = get_no_projects_per_user( $maincoursecategory ,  $recorduserid );
             	
-            	if ($recordusertype==5 && $recorduserselectedideas >= 2 ){
-            		$recorduserselectedideasmessage = '<h6> Publisher of this idea have already select an idea</h6>';
+            	if ($recordusertype==5 && $recordusermatchedideas >= 2 ){
+            		$recordusermatchedideasmessage = '<h6> Publisher of this idea have already select an idea</h6>';
             	}
             	
             	//check is own idea
@@ -1482,15 +1482,15 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             		$usertypematchmessage= "<h6>&nbsp;This has published by another ". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
             	}
             		
-            	//check is idea selected
-            	$selectedmessage="";
-            	if ($DB->get_field('idea_records', 'selected', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
-            		$selectedmessage='<h6> This idea already selected and project has created</h6>';
+            	//check is idea matched
+            	$matchedmessage="";
+            	if ($DB->get_field('idea_records', 'matched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
+            		$matchedmessage='<h6> This idea already matched and project has created</h6>';
             	}
             	          
             	
             	$normalusermessage ="";
-            	$normalusermessage = $userselectedideasmessage . $selectedmessage .$ownidea. $usertypematchmessage. $recorduserselectedideasmessage   ;
+            	$normalusermessage = $usermatchedideasmessage . $matchedmessage .$ownidea. $usertypematchmessage. $recordusermatchedideasmessage   ;
            
             	//check is there any constrain to create project file for start processing
             	if ($normalusermessage == "") {
@@ -1501,11 +1501,11 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	}
             
             	            	
-            	if ((ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)) && $selectedmessage<>""){
-            		echo "</br> <h5> Athough youre a manager You can not manage this idea since ; $selectedmessage  </h5>";
+            	if ((ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)) && $matchedmessage<>""){
+            		echo "</br> <h5> Athough youre a manager You can not manage this idea since ; $matchedmessage  </h5>";
             		echo "As a manager you can change, procedure is: </br> ";
-            		echo "1) Delete the course 2) Set the approve status to unselected 3) Then come here </br>";
-            	}elseif ( $recorduserselectedideasmessage=="" && ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)){
+            		echo "1) Delete the course 2) Set the approve status to unmatched 3) Then come here </br>";
+            	}elseif ( $recordusermatchedideasmessage=="" && ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)){
             		echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Manage This Idea </a>';
             		
             	}
@@ -1754,7 +1754,7 @@ function idea_print_preference_form($idea, $perpage, $search, $sort='', $order='
     
     
     echo '<form action="view.php?d='. $idea->id .'" method="post">';
-    echo '<table><td><td><input type="checkbox" name="selectedidea" value="1"'. ((isset($_POST['selectedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
+    echo '<table><td><td><input type="checkbox" name="matchedidea" value="1"'. ((isset($_POST['matchedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
     echo '<td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
     echo '<td><input type="checkbox" name="supervisoridea" value="1"'. ((isset($_POST['supervisoridea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Supervisor Ideas</td>';
     echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';

@@ -58,7 +58,6 @@ echo '<form action="http://localhost/moodle/mod/idea/create_project.php" method=
             			<input type="hidden" name="ideaid" value="'.$ideaid.'" />
             			<input type="hidden" name="recordid" value="'.$recordid.'" />
 
-            			//new
 						<input type="hidden" name="studentid" value="'.$studentid.'" />
             			<input type="hidden" name="supervisorid" value="'.$supervisorid.'" />
    
