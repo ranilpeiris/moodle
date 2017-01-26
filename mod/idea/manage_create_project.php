@@ -26,12 +26,8 @@ echo $OUTPUT->header();
 $recorduserrolename = getcustomrolenamefromid($coursecontext,$recorduserid);
 $convertuserrole = convertuserrole($coursecontext, $recorduserid);
 
-echo "recorduserrolenamE xxx $recorduserrolename  </br>";
-echo "convertuserrolev xxx $convertuserrole  </br>";
-
-
-echo "<h5> <span style='color:black'> Title for the new project:</span> $recordtitle </h5>  ";
-echo "<h5> <span style='color:black'> The idea proposed by: $recordusername and this user will be assign as the :</span> $recorduserrolename  </H5>  ";
+echo "<h5> <span style='color:black'> Title for the new project: </span> $recordtitle </h5>";
+echo "<h5> <span style='color:black'> The idea proposed by: </span>  $recordusername <span style='color:black'> and this user will be assign as the :</span> $recorduserrolename  </h5>  ";
 
 $newusername ="";
 
@@ -57,7 +53,8 @@ if ($mform->no_submit_button_pressed()) {
 
 $mform->display();
 
-echo "<br/> newusername $newusername";
+echo "<h5> <span style='color:black'> The idea will be assign to : </span> $newusername </h5>  ";
+
 
 if ($newusername==""){
 	echo "<h4> Cannot proceed!: Select an user to assign ; The selected user will be assign as: $convertuserrole </h4>";
@@ -91,7 +88,7 @@ if ($newusername==""){
 	echo " <h5> <span style='color:black' > The project supervisor:</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
 	echo " <h5> <span style='color:black' > The project student   :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
 	//edit by Ranil
-	echo '<form action="http://localhost/moodledev/mod/idea/create_project.php" method="post">
+	echo '<form action="http://localhost/moodle/mod/idea/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
   
@@ -104,10 +101,8 @@ if ($newusername==""){
             			<input type="submit" value="Confirm Create project">
             			</form>';
 }
-echo "<br xxxxxxxxxx newuserid $newuserid";
-echo "<br xxxxxxxxxxxxxx newuserrole $newuserrole";
 
-echo '<form action="http://localhost/moodledev/mod/idea/view.php" method="post">
+echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$ideaid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
             			<input type="submit" value="Cancel Create project">

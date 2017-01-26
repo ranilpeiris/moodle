@@ -51,7 +51,7 @@ echo "The idea will selected by: $username  </br> ";
 echo " <h5> <span style='color:black' > The project supervisor:</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
 echo " <h5> <span style='color:black' > The project student   :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
 //edit by Ranil
-echo '<form action="http://localhost/moodledev/mod/idea/create_project.php" method="post">
+echo '<form action="http://localhost/moodle/mod/idea/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
      
@@ -66,7 +66,7 @@ echo '<form action="http://localhost/moodledev/mod/idea/create_project.php" meth
             			</form>';
 
 
-echo '<form action="http://localhost/moodledev/mod/idea/view.php" method="post">
+echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$ideaid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
             			<input type="submit" value="Cancel Create project">

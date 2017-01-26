@@ -44,7 +44,7 @@ $course = create_course((object) $idea );
 
 //project creation information
 if ($course) {
-	echo '<a href="http://localhost/moodledev/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
+	echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
 } else {
 	echo '<h4>Project didnt created please retry or contact coordinator</h4>';
 }
@@ -58,7 +58,7 @@ $enrollement2 = enrol_try_internal_enrol($course->id, $studentuserid , 5, 0, 0);
 //create object to pass project creation function
 $recordobj = new stdclass;
 $recordobj->id = $recordid;
-$recordobj->approved = 1;
+$recordobj->selected = 1;
 
 $DB->update_record('idea_records', $recordobj, $bulk=false);
 

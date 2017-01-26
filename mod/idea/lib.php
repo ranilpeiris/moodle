@@ -21,7 +21,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once("$CFG->libdir/coursecatlib.php");
-
 defined('MOODLE_INTERNAL') || die();
 
 //TODO Some constants
@@ -1453,55 +1452,61 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             		
             	//Ranil Check is user  has manager rights
             	//check wether user has maximum number of ideas
-            	$userapprovedideasmessage="";
+            	$userselectedideasmessage="";
             	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-            	$userapprovedideas = get_no_projects_per_user( $maincoursecategory ,  $userid );
-            	 
-            	if ($usertype==5 && $userapprovedideas >= 2 ){
-            		$userapprovedideasmessage = '<h6> You have already select an idea, Contact coordinator if you want to change</h6>';
+            	$userselectedideas = get_no_projects_per_user( $maincoursecategory ,  $userid );
+            	
+            	            	
+            	if ($usertype==5 && $userselectedideas >= 2 ){
+            		$userselectedideasmessage = '<h6> You have already select an idea, Contact coordinator if you want to change</h6>';
             	}
             	
             	// check wether publisher (record user) has maximum number of ideas
             	
-            	$recorduserapprovedideasmessage="";
+            	$recorduserselectedideasmessage="";
             	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-            	$recorduserapprovedideas = get_no_projects_per_user( $maincoursecategory ,  $recorduserid );
+            	$recorduserselectedideas = get_no_projects_per_user( $maincoursecategory ,  $recorduserid );
             	
-            	if ($usertype==5 && $recorduserapprovedideas >= 2 ){
-            		$recorduserapprovedideasmessage = '<h6> Publisher of this idea have already select an idea</h6>';
+            	if ($recordusertype==5 && $recorduserselectedideas >= 2 ){
+            		$recorduserselectedideasmessage = '<h6> Publisher of this idea have already select an idea</h6>';
             	}
             	
-            		
-            	//check is idea approved
-            	$approvedmessage="";
-            	if ($DB->get_field('idea_records', 'approved', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
-            		$approvedmessage='<h6> This idea already selected and project has created</h6>';
-            	}
-            	
-            	
-            		
+            	//check is own idea
+            	$ownidea="";
             	//check is user type are equal
             	$usertypematchmessage ="";
-            	if (ideagetcustomrolename($usertype) == ideagetcustomrolename($recordusertype)){ // Check user types of user and idea publisher
+            	
+            	if ($userid==$recorduserid ){
+            		$ownidea = '<h6> This is published by you</h6>';
+            	}elseif (ideagetcustomrolename($usertype) == ideagetcustomrolename($recordusertype)){ // Check user types of user and idea publisher
             		$usertypematchmessage= "<h6>&nbsp;This has published by another ". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
             	}
+            		
+            	//check is idea selected
+            	$selectedmessage="";
+            	if ($DB->get_field('idea_records', 'selected', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
+            		$selectedmessage='<h6> This idea already selected and project has created</h6>';
+            	}
+            	          
+            	
             	$normalusermessage ="";
-            	$normalusermessage = $approvedmessage . $usertypematchmessage. $userapprovedideasmessage . $recorduserapprovedideasmessage   ;
+            	$normalusermessage = $userselectedideasmessage . $selectedmessage .$ownidea. $usertypematchmessage. $recorduserselectedideasmessage   ;
            
             	//check is there any constrain to create project file for start processing
             	if ($normalusermessage == "") {
-            		echo '<a href="http://localhost/moodledev/mod/idea/prepare_create_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
+            		echo '<a href="http://localhost/moodle/mod/idea/prepare_create_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
             		// echo "test course id $idea->course";
             	} else {
-            		echo "<h5> As a ". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $userid  )). "you can not select this idea </h5> reasons are:". $normalusermessage . "</br>";
+            		echo "<h5> As a &nbsp;". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $userid  )). " you can not select this idea </h5> reasons are:". $normalusermessage . "</br>";
             	}
             
-            	if ((ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)) && $approvedmessage<>""){
-            		echo "</br> <h5> Athough youre a manager You can not manage this idea since ; $approvedmessage  </h5>";
+            	            	
+            	if ((ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)) && $selectedmessage<>""){
+            		echo "</br> <h5> Athough youre a manager You can not manage this idea since ; $selectedmessage  </h5>";
             		echo "As a manager you can change, procedure is: </br> ";
-            		echo "1) Delete the course 2) Set the approve status to unapproved 3) Then come here </br>";
-            	}elseif (ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)){
-            		echo '<a href="http://localhost/moodledev/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Manage This Idea </a>';
+            		echo "1) Delete the course 2) Set the approve status to unselected 3) Then come here </br>";
+            	}elseif ( $recorduserselectedideasmessage=="" && ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)){
+            		echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Manage This Idea </a>';
             		
             	}
             		
@@ -1749,7 +1754,7 @@ function idea_print_preference_form($idea, $perpage, $search, $sort='', $order='
     
     
     echo '<form action="view.php?d='. $idea->id .'" method="post">';
-    echo '<table><td><td><input type="checkbox" name="approvedidea" value="1"'. ((isset($_POST['approvedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
+    echo '<table><td><td><input type="checkbox" name="selectedidea" value="1"'. ((isset($_POST['selectedidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Matched Ideas </td>';
     echo '<td><input type="checkbox" name="avilableidea" value="1"'. ((isset($_POST['avilableidea'])) ? 'checked="checked"' : "") . ' onclick="submit()"> Avilable ideas </td>';
     echo '<td><input type="checkbox" name="supervisoridea" value="1"'. ((isset($_POST['supervisoridea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Supervisor Ideas</td>';
     echo '<td><input type="checkbox" name="studentidea" value="1"'. ((isset($_POST['studentidea'])) ? 'checked="checked"' : "") . ' onclick="submit()">Student Ideas</td>';
@@ -1759,14 +1764,6 @@ function idea_print_preference_form($idea, $perpage, $search, $sort='', $order='
     
     
     //TODO END OF FILTER PANELranil
-    
-    
-    
-    
-    
-    
-    
-    
     
     echo '<br /><div class="ideapreferences">';
     echo '<form id="options" action="view.php" method="get">';

@@ -27,7 +27,7 @@
     require_once($CFG->libdir . '/rsslib.php');
     require_once($CFG->libdir . '/completionlib.php');
 
-/// One of these is necessary!
+///TODO One of these is necessary!
     $id = optional_param('id', 0, PARAM_INT);  // course module id
     $d = optional_param('d', 0, PARAM_INT);   // ideabase id
     $rid = optional_param('rid', 0, PARAM_INT);    //record id
@@ -46,7 +46,7 @@
     
     //ranil added
     
-    $approvedidea = optional_param('approvedidea', 0, PARAM_INT);
+    $selectedidea = optional_param('selectedidea', 0, PARAM_INT);
     $avilableidea = optional_param('avilableidea', 0 , PARAM_INT);
     $supervisoridea = optional_param('supervisoridea', 0, PARAM_INT);
     $studentidea = optional_param('studentidea', 0, PARAM_INT);
@@ -115,8 +115,8 @@
         $SESSION->ideaprefs = array();
     }
     
-    //ranil added 
-    if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1 || $myideas ==1){
+    //TODO ranil added 
+    if ($selectedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1 || $myideas ==1){
     	$SESSION->ideaprefs = array();
     }
     //end ranil
@@ -605,94 +605,94 @@ if ($showactivity) {
             $sortorder = " ORDER BY $ordering, r.id $order";
             $searchselect = '';
             
-           //ranil section check and select filter options cahnge 
+           //TODO ranil section check and select filter options cahnge 
            
 
             $customfiletrwhere = "";
             
-            if ($approvedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1 ||$myideas ==1){
+            if ($selectedidea == 1 || $avilableidea == 1 || $supervisoridea == 1 ||  $studentidea ==1 ||$myideas ==1){
             		
-            	if($approvedidea == 0 && $avilableidea == 0 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1 ){
+            	if($selectedidea == 0 && $avilableidea == 0 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1 ){
             		$customfiletrwhere = "AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	} elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1  ){
-            		$customfiletrwhere = "AND r.approved = 1  AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
+            	} elseif ($selectedidea == 1 && $avilableidea == 0 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1  ){
+            		$customfiletrwhere = "AND r.selected = 1  AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	} elseif ($approvedidea == 0 && $avilableidea == 1 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1  ){
-            		$customfiletrwhere = "AND r.approved = 0  AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
+            	} elseif ($selectedidea == 0 && $avilableidea == 1 && $supervisoridea == 0 &&  $studentidea ==0 && $myideas ==1  ){
+            		$customfiletrwhere = "AND r.selected = 0  AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id =" . $USER->id . " AND  co.id =". "$course->id";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	} elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
-            		$customfiletrwhere = "AND r.approved = 1 ";
+            	} elseif ($selectedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==1){
+            		$customfiletrwhere = "AND r.selected = 1 ";
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 0 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==1){
-            		$customfiletrwhere = "AND r.approved = 0 ";
+            	}elseif ($selectedidea == 0 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==1){
+            		$customfiletrwhere = "AND r.selected = 0 ";
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 1 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==0){
+            	}elseif ($selectedidea == 1 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==0){
             		$customfiletrwhere = "AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 1 && $avilableidea == 1 && $supervisoridea==0 &&  $studentidea==1){
+            	}elseif ($selectedidea == 1 && $avilableidea == 1 && $supervisoridea==0 &&  $studentidea==1){
             		$customfiletrwhere = "AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid AND co.id =". "$course->id" ." AND ro.id = 5";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==0){
-            		$customfiletrwhere = "AND r.approved = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
+            	}elseif ($selectedidea == 1 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==0){
+            		$customfiletrwhere = "AND r.selected = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==1){
-            		$customfiletrwhere = "AND r.approved = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
+            	}elseif ($selectedidea == 1 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==1){
+            		$customfiletrwhere = "AND r.selected = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 0 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==0){
-            		$customfiletrwhere = "AND r.approved = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
+            	}elseif ($selectedidea == 0 && $avilableidea == 1 && $supervisoridea==1 &&  $studentidea==0){
+            		$customfiletrwhere = "AND r.selected = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 0 && $avilableidea == 1 && $supervisoridea==0 &&  $studentidea==1){
-            		$customfiletrwhere = "AND r.approved = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
+            	}elseif ($selectedidea == 0 && $avilableidea == 1 && $supervisoridea==0 &&  $studentidea==1){
+            		$customfiletrwhere = "AND r.selected = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 1 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==0){
-            		$customfiletrwhere = "AND r.approved = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ."";
+            	}elseif ($selectedidea == 1 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==0){
+            		$customfiletrwhere = "AND r.selected = 1 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ."";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 0 && $avilableidea == 1 && $supervisoridea==0 &&  $studentidea==0){
-            		$customfiletrwhere = "AND r.approved = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ."";
+            	}elseif ($selectedidea == 0 && $avilableidea == 1 && $supervisoridea==0 &&  $studentidea==0){
+            		$customfiletrwhere = "AND r.selected = 0 AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ."";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 0 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==0){
+            	}elseif ($selectedidea == 0 && $avilableidea == 0 && $supervisoridea==1 &&  $studentidea==0){
             		$customfiletrwhere = " AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND (ro.id = 4 OR ro.id = 3 OR ro.id = 1)";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
             		$where = $where . $customfiletrwhere;
             
-            	}elseif ($approvedidea == 0 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==1){
+            	}elseif ($selectedidea == 0 && $avilableidea == 0 && $supervisoridea==0 &&  $studentidea==1){
             		$customfiletrwhere = " AND con.instanceid = co.id AND con.id = ra.contextid AND con.contextlevel = 50 AND ra.roleid = ro.id AND u.id = ra.userid  AND  co.id =". "$course->id" ." AND ro.id = 5";
             		$customtables = ", {course} co , {context} con , {role_assignments} ra , {role} ro "  ;
             		$tables = $tables .$customtables;
@@ -705,7 +705,7 @@ if ($showactivity) {
             
             
             
-         //ranil section end
+         //TODO ranil section end
             
             
             // If requiredentries is not reached, only show current user's entries
