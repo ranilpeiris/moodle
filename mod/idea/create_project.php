@@ -75,7 +75,11 @@ $updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid
 //if (has_errors()) {
 //throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');
 //}
-
+echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
+            			<input type="hidden" name="d" value="'.$dataid.'" />
+            			<input type="hidden" name="rid" value="'.$recordid.'" />
+            			<input type="submit" value="Back to ideas">
+            			</form>';
 
 echo $OUTPUT->footer();
 

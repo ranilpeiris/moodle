@@ -1491,13 +1491,13 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	
             		if($publisher_matched_message=="" && $idea_matched_message==""){
             			echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
-            		}elseif($publisher_matched_message==""){
-            			echo '<h6> Publisher of this idea have already select an idea</h6>';
-            		}elseif ($idea_matched_message==""){
+            		}elseif($publisher_matched_message<>""){
+            			echo '<h6> Publisher of this idea have already selected another idea</h6>';
+            		}elseif ($idea_matched_message<>""){
             			echo '<h5>Warning: check is idea is correct! Project data will be delete if the project has started</h5>';
-            			echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
+            			echo '<a href="http://localhost/moodle/mod/idea/delete_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Unmatch This Idea </a>';
             			 
-            			//echo '<a href="http://localhost/moodle/mod/idea/unmatched_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Unmatched This Idea </a>';
+            			//echo '<a href="http://localhost/moodle/mod/idea/delete_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Unmatched This Idea </a>';
             		}
             	}
             	// end of manage select button enable secton
