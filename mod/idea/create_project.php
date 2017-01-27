@@ -54,18 +54,23 @@ if ($course) {
 
 $enrollement1 = enrol_try_internal_enrol($course->id, $supervisoruserid, 3, 0, 0);
 $enrollement2 = enrol_try_internal_enrol($course->id, $studentuserid , 5, 0, 0);
-	
-
-$updated =  $DB->execute('UPDATE {idea_records} SET matched = 1 WHERE userid = ? AND ideaid =?' , array($studentuserid , $dataid));
-
-
 
 //create object to pass project creation function
 $recordobj = new stdclass;
 $recordobj->id = $recordid;
 $recordobj->usermatched = 1;
 
-$DB->update_record('idea_records', $recordobj, $bulk=false);
+$userrecordstatus = $DB->update_record('idea_records', $recordobj, $bulk=false);
+
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->notavilable = 1;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+
+
+$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($studentuserid , $dataid));
+
 
 //if (has_errors()) {
 //throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');

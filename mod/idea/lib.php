@@ -1450,78 +1450,58 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	$recordusertype = ideagetanyuserroleid($coursecontext,$recorduserid);
             
             		
-            	//Ranil Check is user  has manager rights
-            	//check wether user has maximum number of ideas
-            	$usermatchedideasmessage="";
-            	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-            	$usermatchedideas = get_no_projects_per_user( $maincoursecategory ,  $userid );
+            //activate button to select manage or delete
             	
-            	            	
-            	if ($usertype==5 && $usermatchedideas >= 2 ){
-            		$usermatchedideasmessage = '<h6> You have already select an idea, Contact coordinator if you want to change</h6>';
+            	
+            //check is the idea matched
+            	$idea_matched_message="";
+            	$publisher_matched_message="";
+            	if ($DB->get_field('idea_records', 'usermatched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
+            		$idea_matched_message='<h6> This idea already matched and project has created</h6>';
+            	}elseif ($DB->get_field('idea_records', 'notavilable', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) { //check is idea matched due to other
+            		$publisher_matched_message='<h6> The publisher of this idea has already matched</h6>';
             	}
-            	
-            	// check wether publisher (record user) has maximum number of ideas
-            	
-            	$recordusermatchedideasmessage="";
-            	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-            	$recordusermatchedideas = get_no_projects_per_user( $maincoursecategory ,  $recorduserid );
-            	
-            	if ($recordusertype==5 && $recordusermatchedideas >= 2 ){
-            		$recordusermatchedideasmessage = '<h6> Publisher of this idea have already select an idea</h6>';
-            	}
-            	
-            	//check is own idea
-            	$ownidea="";
-            	//check is user type are equal
-            	$usertypematchmessage ="";
-            	
+            	 
+            //check is own idea
+            	$own_idea_message="";
+            	$sameuser_type_matchmessage ="";
+            	 
             	if ($userid==$recorduserid ){
-            		$ownidea = '<h6> This is published by you</h6>';
+            		$own_idea_message = '<h6> This is published by you</h6>';
             	}elseif (ideagetcustomrolename($usertype) == ideagetcustomrolename($recordusertype)){ // Check user types of user and idea publisher
-            		$usertypematchmessage= "<h6>&nbsp;This has published by another ". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
+            		$sameuser_type_matchmessage= "<h6>&nbsp;This has published by another ". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
             	}
-            		
-            	//check is idea matched
-            	$matchedmessage="";
-            	if ($DB->get_field('idea_records', 'matched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
-            		$matchedmessage='<h6> This idea already matched and project has created</h6>';
-            	}
-            	          
             	
-            	$normalusermessage ="";
-            	$normalusermessage = $usermatchedideasmessage . $matchedmessage .$ownidea. $usertypematchmessage. $recordusermatchedideasmessage   ;
-           
-            	//check is there any constrain to create project file for start processing
-            	if ($normalusermessage == "") {
+            	$normaluser_message ="";
+            	$normaluser_message = $own_idea_message . $sameuser_type_matchmessage . $idea_matched_message . $publisher_matched_message  ;
+            	 
+            	//for normal users check is there any constrain to create project file for start processing
+            	if ($normaluser_message == "") {
             		echo '<a href="http://localhost/moodle/mod/idea/prepare_create_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
             		// echo "test course id $idea->course";
             	} else {
-            		echo "<h5> As a &nbsp;". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $userid  )). " you can not select this idea </h5> reasons are:". $normalusermessage . "</br>";
+            		echo "<h5> As a &nbsp;". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $userid  )). " You can not select this idea </h5> Reasons are:". $normaluser_message . "</br>";
             	}
-            
-            	            	
-            	if ((ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)) && $matchedmessage<>""){
-            		echo "</br> <h5> Athough youre a manager You can not manage this idea since ; $matchedmessage  </h5>";
-            		echo "As a manager you can change, procedure is: </br> ";
-            		echo "1) Delete the course 2) Set the approve status to unmatched 3) Then come here </br>";
-            	}elseif ( $recordusermatchedideasmessage=="" && ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)){
-            		echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Manage This Idea </a>';
-            		
+            	
+            	
+           // for admin and managers
+
+            	/////////
+            	if ( ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)  ){
+            	
+            		if($publisher_matched_message=="" && $idea_matched_message==""){
+            			echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
+            		}elseif($publisher_matched_message==""){
+            			echo '<h6> Publisher of this idea have already select an idea</h6>';
+            		}elseif ($idea_matched_message==""){
+            			echo '<h5>Warning: check is idea is correct! Project data will be delete if the project has started</h5>';
+            			echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
+            			 
+            			//echo '<a href="http://localhost/moodle/mod/idea/unmatched_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Unmatched This Idea </a>';
+            		}
             	}
-            		
-            		
+            	// end of manage select button enable secton
             }
-            
-            
-            /// ranil end of create button section
-            
-            
-            
-            
-            
-            
-            
             
             
             
@@ -4278,7 +4258,8 @@ function get_no_projects_per_user( $category ,  $checkuserid ){
 
 
 function ideagetcustomrolename($anyUserRoleId) {
-	if ($anyUserRoleId==4 || $anyUserRoleId==3 || $anyUserRoleId==1 ) {
+	global $USER;
+	if ($anyUserRoleId==4 || $anyUserRoleId==3 || $anyUserRoleId==1 || is_siteadmin($USER->id)) {
 		return "Teacher";
 	}elseif ($anyUserRoleId==5){
 		return "Student";

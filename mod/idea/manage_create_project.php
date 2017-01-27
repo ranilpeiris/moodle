@@ -100,6 +100,21 @@ if ($newusername==""){
 
             			<input type="submit" value="Confirm Create project">
             			</form>';
+	
+	echo '<form action="http://localhost/moodle/mod/idea/delete_project.php" method="post">
+            			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
+            			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
+	
+            			<input type="hidden" name="ideaid" value="'.$ideaid.'" />
+            			<input type="hidden" name="recordid" value="'.$recordid.'" />
+	
+            			<input type="hidden" name="studentid" value="'. $studentdetails->id .'" />
+            			<input type="hidden" name="supervisorid" value="'. $supervisordetails->id .'" />
+	
+            			<input type="submit" value="Confirm Delete project">
+            			</form>';
+	
+	
 }
 
 echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
