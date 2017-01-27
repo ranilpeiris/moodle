@@ -4,6 +4,7 @@ require_once("../../config.php");
 require_once("lib.php");
 require_once("../../course/lib.php");
 require_once("../../lib/enrollib.php");
+require_once("confirunmatch_form.php");
 
 global $USER;
 global $DB;
@@ -44,54 +45,65 @@ $maincoursecategory= $DB->get_field('course', 'category', array('id'=> $maincour
 echo $OUTPUT->header();
 //echo $OUTPUT->heading($strdataplural, 2);
 
+$mform = new confirmunmatch_form( null, array( 'ideatitle'=>$ideatitle,'maincourseid'=>$maincourseid, 'studentid'=>$studentid, 'supervisorid'=>$supervisorid));//name of the form you defined in file above.
+
+//$mform->set_idea($toform);
 
 
-$idea = array(
-		'shortname' => $ideatitle,
-		'fullname' => $ideatitle,
-		'category' => $maincoursecategory,
-);
+if ($mform->no_submit_button_pressed()) {
 
-
-$coursedeleted = delete_course($courseidtodelete);
-
-
-//project deleation information
-if ($coursedeleted) {
-	echo '<h5> Course unmatched! the related project also deleted </h5>';
-} else {
-	echo '<h5>Idea could not unmatched, please retry</h5>';
-}
-//if (has_errors()) {
-//throw new moodle_exception('Cannot proceed, errors were detected.');
-//}
-
-
-foreach($studentuserlist as $author){ //for each studnts in the list
-
-	$authorroleid = $author->id;
-	//set all avilable to 0 for the  student record
-	$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 0 WHERE userid = ? AND ideaid =?' , array($authorroleid , $dataid));
+	$idea = array(
+			'shortname' => $ideatitle,
+			'fullname' => $ideatitle,
+			'category' => $maincoursecategory,
+	);
+	
+	
+	$coursedeleted = delete_course($courseidtodelete);
+	
+	
+	//project deleation information
+	if ($coursedeleted) {
+		echo '<h5> Course unmatched! the related project also deleted </h5>';
+	} else {
+		echo '<h5>Idea could not unmatched, please retry</h5>';
+	}
+	//if (has_errors()) {
+	//throw new moodle_exception('Cannot proceed, errors were detected.');
+	//}
+	
+	
+	foreach($studentuserlist as $author){ //for each studnts in the list
+	
+		$authorroleid = $author->id;
+		//set all avilable to 0 for the  student record
+		$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 0 WHERE userid = ? AND ideaid =?' , array($authorroleid , $dataid));
 			
+	}
+	
+	//create object to pass project creation function
+	$recordobj = new stdclass;
+	$recordobj->id = $recordid;
+	$recordobj->usermatched = 0;
+	
+	$userrecordstatus = $DB->update_record('idea_records', $recordobj, $bulk=false);
+	
+	$recordobj1 = new stdclass;
+	$recordobj1->id = $recordid;
+	$recordobj1->notavilable = 0;
+	
+	$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+	
+	
+	//if (has_errors()) {
+	//throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');
+	//}
+
 }
 
-//create object to pass project creation function
-$recordobj = new stdclass;
-$recordobj->id = $recordid;
-$recordobj->usermatched = 0;
-
-$userrecordstatus = $DB->update_record('idea_records', $recordobj, $bulk=false);
-
-$recordobj1 = new stdclass;
-$recordobj1->id = $recordid;
-$recordobj1->notavilable = 0;
-
-$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+$mform->display();
 
 
-//if (has_errors()) {
-//throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');
-//}
 echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$dataid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
