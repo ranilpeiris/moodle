@@ -2,99 +2,75 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-//require_once("changeuser_form.php");
+require_once("../../course/lib.php");
+require_once("../../lib/enrollib.php");
+require_once("confirmunmatch_form.php");
+
 global $USER;
 global $DB;
 
+
 $PAGE->set_url('/mod/idea/unmatched_project.php');
 
-$username = $USER->username;
-$userid = $USER->id;
+// for course creation
+$recordtitle = required_param( 'recordtitle', PARAM_TEXT); // Short name and long name of the new course
+//$categoryid = required_param('categoryid', PARAM_TEXT); // category of new course
+$maincourseid = required_param('courseid', PARAM_TEXT);// category of new course
+
+//for udate record as selected
 $recordid = required_param('recordid', PARAM_TEXT);
 $ideaid = required_param('ideaid', PARAM_TEXT);
-$courseid = required_param('courseid', PARAM_TEXT);
-$recordtitle=required_param('recordtitle', PARAM_TEXT);
-$userid=optional_param($parname, '', PARAM_TEXT);
 
-$coursecontext = context_course::instance($courseid);
-//$recordtitle = $DB->get_field('idea_content', 'content', array('recordid'=>$recordid), $strictness=IGNORE_MISSING);
-$recorduserid = $DB->get_field('idea_records', 'userid', array('id'=>$recordid), $strictness=IGNORE_MISSING);
-$coursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
-$recordusername= $DB->get_field('user', 'username', array('id'=> $recorduserid), $strictness=IGNORE_MISSING);
-//$approved= $DB->get_field(idea_records, approved, array('id'=> $recordid), $strictness=IGNORE_MISSING);
+//for enrollement
+echo "xxx recordtitle $recordtitle";
+$courseidtodelete = $DB->get_field('course', 'id', array('shortname'=> $recordtitle), $strictness=IGNORE_MISSING);
+
+$studentuserlist = $DB->get_records_sql("SELECT {user}.id, {user}.username, {user}.firstname ,{user}.lastname , {role}.id FROM {course}
+		JOIN {context}  ON {context}.instanceid = {course}.id JOIN {role_assignments}  ON {context}.id = {role_assignments}.contextid AND
+		{context}.contextlevel = 50 JOIN {role}  ON {role_assignments}.roleid = {role}.id JOIN {user}  ON {user}.id = {role_assignments}.userid WHERE {role}.id = 5 AND {course}.id = ?" , array($courseidtodelete));
+	
+$supervisoruserlist = $DB->get_records_sql('SELECT {user}.id, {user}.username, {user}.firstname ,{user}.lastname FROM {course}
+		JOIN {context}  ON {context}.instanceid = {course}.id JOIN {role_assignments}  ON {context}.id = {role_assignments}.contextid AND
+		{context}.contextlevel = 50 JOIN {role}  ON {role_assignments}.roleid = {role}.id JOIN {user}  ON {user}.id = {role_assignments}.userid WHERE ({role}.id = 4 OR {role}.id = 3 OR {role}.id = 1 ) AND {course}.id = ?' , array($courseidtodelete));
+
+foreach ($studentuserlist as $student){
+	$studentid = $student->id;
+}
+foreach ($supervisoruserlist as $supervisor){
+	$supervisorid = $supervisor->id;
+}
+
+$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
+$supervisordetails = $DB->get_record_sql('SELECT username, firstname, Lastname FROM {user} WHERE id = ?', array($supervisorid));
+$studentdetails = $DB->get_record_sql('SELECT username, firstname, Lastname FROM {user} WHERE id = ?', array($studentid));
+$coursedetails = $DB->get_record_sql('SELECT fullname FROM {course} WHERE id = ?', array($maincourseid));
 
 
 echo $OUTPUT->header();
-//echo $OUTPUT->heading($strideaplural, 2);
+//echo $OUTPUT->heading($strdataplural, 2);
 
-$userrole = getuserrole($coursecontext,$userid);
-$recorduserrole = getrecorduserrole($coursecontext,$recorduserid);
+echo "<h5> The Program Name: $coursedetails->fullname </h5> ";
+echo "<h5> The title of the matched project to be unmatched: $recordtitle ";
+echo " <h5> <span style='color:black' > The supervisor of the match::</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
+echo " <h5> <span style='color:black' > The student of the match  :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
+ 
 
-if ($userrole == 5 ) {
-	$studentid = $userid;
-}elseif ($userrole == 4 || $userrole == 3 || $userrole == 1){
-	$supervisorid = $userid;
-}
-
-if ($recorduserrole == 5 ) {
-	$studentid = $recorduserid;
-} elseif ($recorduserrole == 4 || $recorduserrole == 3 || $recorduserrole == 1){
-	$supervisorid = $recorduserid;
-}
-
-$supervisordetails = $DB->get_record_sql('SELECT username, firstname, Lastname FROM {user} WHERE id = ?', array($supervisorid));
-$studentdetails = $DB->get_record_sql('SELECT username, firstname, Lastname FROM {user} WHERE id = ?', array($studentid));
-
-
-echo "<h5> <span style='color:black'> Title for the new project:</span> $recordtitle </H5>  ";
-echo "The idea proposed by: $recordusername  </br> ";
-echo "The idea will selected by: $username  </br> ";
-echo " <h5> <span style='color:black' > The project supervisor:</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
-echo " <h5> <span style='color:black' > The project student   :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
-//edit by Ranil
-echo '<form action="http://localhost/moodle/mod/idea/delete_project.php" method="post">
-            			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
-            			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
-     
-            			<input type="hidden" name="ideaid" value="'.$ideaid.'" />
+echo '<table> <tr><td>
+		<form action="http://localhost/moodle/mod/idea/delete_project.php" method="post">
+            			<input type="hidden" name="recordtitle" value="'.$recordtitle.'" />
+            			<input type="hidden" name="courseid" value="'.$maincourseid.'" />
             			<input type="hidden" name="recordid" value="'.$recordid.'" />
+            			<input type="hidden" name="ideaid" value="'.$ideaid.'" />
+            			<input type="submit" value="Confirm Unmatch">
+            			</form>
+		</td><td>
 
-						<input type="hidden" name="studentid" value="'.$studentid.'" />
-            			<input type="hidden" name="supervisorid" value="'.$supervisorid.'" />
-   
-            			<input type="submit" value="Confirm Create project">
-            			</form>';
-
-
-echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
+		<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$ideaid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
-            			<input type="submit" value="Cancel Create project">
-            			</form>';
-
+            			<input type="submit" value=" &nbsp;&nbsp;Back to ideas &nbsp;&nbsp;">
+            			</form>
+		</td><tr></table>';
 
 echo $OUTPUT->footer();
-
-// check is the new user id is who
-
-
-function getuserrole($coursecontext, $userid) {
-	if ($roles = get_user_roles($coursecontext, $userid)) {
-		foreach ($roles as $role) {
-			$uroleId = $role->roleid;
-		}
-		return $uroleId;
-	}
-}
-
-
-function getrecorduserrole($coursecontext, $recorduserid)
-{
-	if ($roles = get_user_roles($coursecontext, $recorduserid)) {
-		foreach ($roles as $role) {
-			$uroleId = $role->roleid;
-		}
-		return $uroleId;
-	}
-}
 
