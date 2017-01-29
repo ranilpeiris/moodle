@@ -101,7 +101,7 @@ if ($newusername==""){
             			<input type="submit" value="Confirm Create project">
             			</form>';
 	
-	echo '<form action="http://localhost/moodle/mod/idea/delete_project.php" method="post">
+	/**echo '<form action="http://localhost/moodle/mod/idea/delete_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
 	
@@ -113,7 +113,7 @@ if ($newusername==""){
 	
             			<input type="submit" value="Confirm Delete project">
             			</form>';
-	
+	*/
 	
 }
 
