@@ -44,7 +44,12 @@ $course = create_course((object) $idea );
 
 //project creation information
 if ($course) {
-	echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
+	$newcourseurl = new moodle_url('/course/view.php', array('id' => $course->id ));
+	$viewnewcoursebutton  = new single_button($newcourseurl, 'View new project', 'post');
+	echo html_writer::tag('div', '' . $OUTPUT->render($viewnewcoursebutton),array('class' => 'mdl-align'));
+	
+	//echo '<a href="http://localhost/moodle/course/view.php?id='.$course->id.'"> Go to your new project page </a>';
+	
 } else {
 	echo '<h4>Project didnt created please retry or contact coordinator</h4>';
 }
@@ -75,11 +80,17 @@ $updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid
 //if (has_errors()) {
 //throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');
 //}
+
+$ideaviewurl = new moodle_url('/mod/idea/view.php', array('d' => $dataid , 'rid' =>$recordid ));
+$viewideabutton  = new single_button($ideaviewurl, 'Back to ideas', 'post');
+echo html_writer::tag('div', '' . $OUTPUT->render($viewideabutton),array('class' => 'mdl-align'));
+
+/**
 echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$dataid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
             			<input type="submit" value="Back to ideas">
             			</form>';
-
+*/
 echo $OUTPUT->footer();
 

@@ -51,6 +51,23 @@ echo "The idea will selected by: $username  </br> ";
 echo " <h5> <span style='color:black' > The project supervisor:</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
 echo " <h5> <span style='color:black' > The project student   :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
 //edit by Ranil
+
+$confirmurl =new moodle_url('/mod/idea/create_project.php', array('ideatitle'=> $recordtitle , 'maincourseid'=>$courseid , 'ideaid'=> $ideaid ,  'recordid'=> $recordid , 'studentid'=> $studentid , 'supervisorid'=>$supervisorid  ));
+$ideaviewurl = new moodle_url('/mod/idea/view.php', array('d' => $ideaid , 'rid' =>$recordid ));
+$confirmbutton= new single_button($confirmurl, 'Confirm Create project', 'post');
+$viewideabutton  = new single_button($ideaviewurl, 'Cancel Create project', 'post');
+
+echo '<table> <tr><td>';
+echo html_writer::tag('div', '' . $OUTPUT->render($confirmbutton),array('class' => 'mdl-align'));
+echo '</td><td>';
+echo html_writer::tag('div', '' . $OUTPUT->render($viewideabutton),array('class' => 'mdl-align'));
+echo '</td><tr></table>';
+
+
+
+
+
+/*
 echo '<form action="http://localhost/moodle/mod/idea/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
@@ -70,7 +87,7 @@ echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="rid" value="'.$recordid.'" />
             			<input type="submit" value="Cancel Create project">
             			</form>';
-
+*/
 
 echo $OUTPUT->footer();
 

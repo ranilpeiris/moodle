@@ -88,6 +88,13 @@ if ($newusername==""){
 	echo " <h5> <span style='color:black' > The project supervisor:</span> $supervisordetails->username : $supervisordetails->firstname  $supervisordetails->lastname <h5> ";
 	echo " <h5> <span style='color:black' > The project student   :</span> $studentdetails->username : $studentdetails->firstname  $studentdetails->lastname</H5> </br>";
 	//edit by Ranil
+	
+	$confirmurl =new moodle_url('/mod/idea/create_project.php', array('ideatitle'=> $recordtitle , 'maincourseid'=>$courseid , 'ideaid'=> $ideaid ,  'recordid'=> $recordid , 'studentid'=> $studentdetails->id , 'supervisorid'=>$supervisordetails->id  ));
+	$confirmbutton= new single_button($confirmurl, 'Confirm Create project', 'post');
+
+	echo html_writer::tag('div', '' . $OUTPUT->render($confirmbutton),array('class' => 'mdl-align'));
+	
+	/**
 	echo '<form action="http://localhost/moodle/mod/idea/create_project.php" method="post">
             			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
             			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
@@ -100,29 +107,21 @@ if ($newusername==""){
 
             			<input type="submit" value="Confirm Create project">
             			</form>';
-	
-	/**echo '<form action="http://localhost/moodle/mod/idea/delete_project.php" method="post">
-            			<input type="hidden" name="ideatitle" value="'.$recordtitle.'" />
-            			<input type="hidden" name="maincourseid" value="'.$courseid.'" />
-	
-            			<input type="hidden" name="ideaid" value="'.$ideaid.'" />
-            			<input type="hidden" name="recordid" value="'.$recordid.'" />
-	
-            			<input type="hidden" name="studentid" value="'. $studentdetails->id .'" />
-            			<input type="hidden" name="supervisorid" value="'. $supervisordetails->id .'" />
-	
-            			<input type="submit" value="Confirm Delete project">
-            			</form>';
 	*/
 	
 }
 
+$ideaviewurl = new moodle_url('/mod/idea/view.php', array('d' => $ideaid , 'rid' =>$recordid ));
+$viewideabutton  = new single_button($ideaviewurl, 'Back to ideas', 'post');
+echo html_writer::tag('div', '' . $OUTPUT->render($viewideabutton),array('class' => 'mdl-align'));
+
+/**
 echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$ideaid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
             			<input type="submit" value="Cancel Create project">
             			</form>';
-
+*/
 
 echo $OUTPUT->footer();
 

@@ -58,14 +58,14 @@ echo " <h5> <span style='color:black' > The supervisor of the match:</span> $sup
 echo " <h5> <span style='color:black' > The student of the match: $studentusername :</span> $studentfirstname &nbsp; $studentlastname</H5> </br>";
  
 $confirmurl =new moodle_url('/mod/idea/delete_project.php', array('maincoursecategory'=>$maincoursecategory , 'courseidtodelete'=>$courseidtodelete, 'recordid'=>$recordid, 'ideaid'=>$ideaid ));
-$backurl = new moodle_url('/mod/idea/view.php', array('d' => $ideaid , 'rid' =>$recordid ));
+$ideaviewurl = new moodle_url('/mod/idea/view.php', array('d' => $ideaid , 'rid' =>$recordid ));
 $confirmbutton= new single_button($confirmurl, 'Confrim', 'post');
-$backbutton  = new single_button($backurl, 'Back to ideas', 'post');
+$viewideabutton  = new single_button($ideaviewurl, 'Back to ideas', 'post');
 
 echo '<table> <tr><td>';
 echo html_writer::tag('div', '' . $OUTPUT->render($confirmbutton),array('class' => 'mdl-align'));
 echo '</td><td>';
-echo html_writer::tag('div', '' . $OUTPUT->render($backbutton),array('class' => 'mdl-align'));
+echo html_writer::tag('div', '' . $OUTPUT->render($viewideabutton),array('class' => 'mdl-align'));
 echo '</td><tr></table>';
 
 echo $OUTPUT->footer();

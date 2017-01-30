@@ -1477,7 +1477,10 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	 
             	//for normal users check is there any constrain to create project file for start processing
             	if ($normaluser_message == "") {
-            		echo '<a href="http://localhost/moodle/mod/idea/prepare_create_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
+            		$prepareprojecturl = new moodle_url('/mod/idea/prepare_create_project.php' , array('courseid'=> $idea->course , 'ideaid'=>$idea->id , 'recordid'=> $record->id , 'recordtitle' => $recordtitle));
+            		echo '<a href="'. $prepareprojecturl .'"> Select This Idea </a>';
+            		
+            		//echo '<a href="http://localhost/moodle/mod/idea/prepare_create_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> Select This Idea </a>';
             		// echo "test course id $idea->course";
             	} else {
             		echo "<h5> As a &nbsp;". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $userid  )). " You can not select this idea </h5> Reasons are:". $normaluser_message . "</br>";
@@ -1490,12 +1493,18 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	if ( ideagetanyuserroleid($coursecontext,$userid)==1 || is_siteadmin($userid)  ){
             	
             		if($publisher_matched_message=="" && $idea_matched_message==""){
-            			echo '<a href="http://localhost/moodle/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
+            			$createprojecturl= new moodle_url('/mod/idea/manage_create_project.php', array('courseid'=>$idea->course , 'recourduserid'=>$recorduserid, 'recourdusertype'=> $recordusertype , 'ideaid'=> $idea->id ,'recordid'=> $record->id , 'recordtitle'=> $recordtitle));
+            			echo '<a href="'.$createprojecturl . '"> </br> Match This Idea </a>';
+            			        
+            			
+            			//echo '<a href="'.$createprojecturl.'"/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
             		}elseif($publisher_matched_message<>""){
             			echo '<h6> Publisher of this idea have already selected another idea</h6>';
             		}elseif ($idea_matched_message<>""){
             			echo '<h5>Warning: check is idea is correct! Project data will be delete if the project has started</h5>';
-            			echo '<a href="http://localhost/moodle/mod/idea/unmatched_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Unmatch This Idea </a>';
+            			$manageprojecturl = new moodle_url('/mod/idea/unmatched_project.php', array('courseid'=> $idea->course , 'ideaid'=>$idea->id , 'recordid'=> $record->id , 'recordtitle'=> $recordtitle));
+            			echo '<a href="'. $manageprojecturl .'"> </br> Unmatch This Idea </a>';
+            			//echo '<a href="http://localhost/moodle/mod/idea/unmatched_project.php?courseid='.$idea->course .'&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Unmatch This Idea </a>';
             			
             			/**
             			echo '<form action="a href="http://localhost/moodle/mod/idea/unmatched_project.php" method="post">
