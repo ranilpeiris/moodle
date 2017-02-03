@@ -1458,9 +1458,18 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	$publisher_matched_message="";
             	if ($DB->get_field('idea_records', 'usermatched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
             		$idea_matched_message='<h6> This idea already matched and project has created</h6>';
-            	}elseif ($DB->get_field('idea_records', 'notavilable', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) { //check is idea matched due to other
+            	}
+            	if ($usertype ==5){ // Check is the user student and has already matched by counting notavilable ideas
+            		$usernotavilablecount =$DB->count_records('idea_records', array('userid'=> $userid, 'notavilable'=> 1));
+            		if ($usernotavilablecount >=1){
+            			$publisher_matched_message='<h6> The publisher of this idea has already matched</h6>';
+            		}
+            	}
+            	            	
+            	if ($DB->get_field('idea_records', 'notavilable', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) { //check is idea matched due to other
             		$publisher_matched_message='<h6> The publisher of this idea has already matched</h6>';
             	}
+            	
             	 
             //check is own idea
             	$own_idea_message="";
