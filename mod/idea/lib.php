@@ -1449,7 +1449,7 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	$usertype = ideagetanyuserroleid($coursecontext,$userid);
             	$recordusertype = ideagetanyuserroleid($coursecontext,$recorduserid);
             
-            		
+            	$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
             //activate button to select manage or delete
             	
             	
@@ -1459,7 +1459,22 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             	$normaluser_message ="";
             	$own_idea_message="";
             	$sameuser_type_matchmessage ="";
-            	 
+            
+            	
+            //TODO Check is user has already created courses
+            
+            if($usertype ==5){ //
+            	$numberofcourcesforstudent = get_courses_for_user( $maincoursecategory ,  $userid ) ;  //get number og enrolled cources in this category       
+            }	
+            echo "<script>
+alert($numberofcourcesforstudent );
+
+</script>";
+            if($numberofcourcesforstudent>=2){   //if enrolled as studnet > 2 then update all records as unavilable         		
+            		$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($userid , $ideaid));
+            }
+            	
+            	
             	if ($DB->get_field('idea_records', 'usermatched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
             		$idea_matched_message='<h6> This idea already matched and project has created</h6>';
             	}
@@ -1509,7 +1524,8 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             			//echo '<a href="'.$createprojecturl.'"/mod/idea/manage_create_project.php?courseid='.$idea->course .'&recourduserid='. $recorduserid .'&recourdusertype='. $recordusertype . '&ideaid='. $idea->id.'&recordid='. $record->id.'&recordtitle='.$recordtitle.'"> </br> Match This Idea </a>';
             		}elseif($publisher_matched_message<>""){
             			echo '<h6> Publisher of this idea have already selected another idea</h6>';
-            		}elseif ($idea_matched_message<>""){
+            		}
+            		if ($idea_matched_message<>""){
             			echo '<h5>Warning: check is idea is correct! Project data will be delete if the project has started</h5>';
             			$manageprojecturl = new moodle_url('/mod/idea/unmatched_project.php', array('courseid'=> $idea->course , 'ideaid'=>$idea->id , 'recordid'=> $record->id , 'recordtitle'=> $recordtitle));
             			echo '<a href="'. $manageprojecturl .'"> </br> Unmatch This Idea </a>';
@@ -4305,4 +4321,26 @@ function ideagetanyuserroleid($coursecontext,$anyuserid){
 		return  $anyuserRoleId;
 	}
 }
+
+function get_courses_for_user( $category ,  $userid ){
+
+	$catcourses = coursecat::get($category)->get_courses();
+	$usercount = 0;
+		foreach($catcourses as $acourse) { //for all cources in the category
+			$cContext = context_course::instance($acourse->id);
+
+			if ($roles = get_user_roles($cContext,$userid)) {
+				foreach ($roles as $role) {
+					$authorroleid = $role->roleid; //role id of the user on the course
+				}
+				if($authorroleid==5){
+					$usercount++;
+				}
+			}
+		}
+	
+	return $usercount;
+}
+
+
 

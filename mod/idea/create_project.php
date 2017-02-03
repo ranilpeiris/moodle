@@ -76,7 +76,6 @@ $userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false)
 
 $updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($studentuserid , $dataid));
 
-
 //if (has_errors()) {
 //throw new moodle_exception('Couldt assign users to the new project, please retry or contact coordinator.');
 //}
