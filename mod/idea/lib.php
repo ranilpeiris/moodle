@@ -1456,32 +1456,32 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             //check is the idea matched
             	$idea_matched_message="";
             	$publisher_matched_message="";
+            	$normaluser_message ="";
+            	$own_idea_message="";
+            	$sameuser_type_matchmessage ="";
+            	 
             	if ($DB->get_field('idea_records', 'usermatched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
             		$idea_matched_message='<h6> This idea already matched and project has created</h6>';
             	}
             	if ($usertype ==5){ // Check is the user student and has already matched by counting notavilable ideas
             		$usernotavilablecount =$DB->count_records('idea_records', array('userid'=> $userid, 'notavilable'=> 1));
             		if ($usernotavilablecount >=1){
-            			$publisher_matched_message='<h6> The publisher of this idea has already matched</h6>';
+            			$publisher_matched_message='<h6> You has an already matched idea</h6>';
             		}
-            	}
-            	            	
-            	if ($DB->get_field('idea_records', 'notavilable', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) { //check is idea matched due to other
+            	}elseif ($DB->get_field('idea_records', 'notavilable', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) { //check is idea matched due to other
             		$publisher_matched_message='<h6> The publisher of this idea has already matched</h6>';
             	}
             	
             	 
             //check is own idea
-            	$own_idea_message="";
-            	$sameuser_type_matchmessage ="";
-            	 
+            	           	 
             	if ($userid==$recorduserid ){
             		$own_idea_message = '<h6> This is published by you</h6>';
             	}elseif (ideagetcustomrolename($usertype) == ideagetcustomrolename($recordusertype)){ // Check user types of user and idea publisher
+                 		
             		$sameuser_type_matchmessage= "<h6>&nbsp;This has published by another ". ideagetcustomrolename(ideagetanyuserroleid( $coursecontext , $recorduserid  )). "</h6>";
             	}
-            	
-            	$normaluser_message ="";
+            	            	
             	$normaluser_message = $own_idea_message . $sameuser_type_matchmessage . $idea_matched_message . $publisher_matched_message  ;
             	 
             	//for normal users check is there any constrain to create project file for start processing
