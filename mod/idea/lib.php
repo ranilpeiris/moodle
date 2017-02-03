@@ -1466,10 +1466,7 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             if($usertype ==5){ //
             	$numberofcourcesforstudent = get_courses_for_user( $maincoursecategory ,  $userid ) ;  //get number og enrolled cources in this category       
             }	
-            echo "<script>
-alert($numberofcourcesforstudent );
-
-</script>";
+           
             if($numberofcourcesforstudent>=2){   //if enrolled as studnet > 2 then update all records as unavilable         		
             		$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($userid , $ideaid));
             }
