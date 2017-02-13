@@ -81,7 +81,7 @@ echo $OUTPUT->doctype() ?>
     </header>
     <div id="page-content" class="row-fluid">
 
-        <div id="<?php echo $regionbsid ?>" class="span9">
+        <div id="<?php echo $regionbsid ?>" class="row-fluid">
 					<?php
 						echo $OUTPUT->course_content_header();
 						echo $OUTPUT->main_content();

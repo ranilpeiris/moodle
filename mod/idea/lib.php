@@ -1462,15 +1462,16 @@ function idea_print_template($template, $records, $idea, $search='', $page=0, $r
             
             	
             //TODO Check is user has already created courses
-            
+            // sometime students can matched before create ideas and then theyir ideas will be marcked as not avilable
             if($usertype ==5){ //
-            	$numberofcourcesforstudent = get_courses_for_user( $maincoursecategory ,  $userid ) ;  //get number og enrolled cources in this category       
+            	$numberofcourcesforstudent = get_courses_for_user( $maincoursecategory ,  $userid ) ;  //get number og enrolled cources in this category 
+            	if($numberofcourcesforstudent>=2){   //if enrolled as studnet > 2 then update all records as unavilable
+            		$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($userid , $ideaid));
+            	}
+            	
             }	
            
-            if($numberofcourcesforstudent>=2){   //if enrolled as studnet > 2 then update all records as unavilable         		
-            		$updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($userid , $ideaid));
-            }
-            	
+           	
             	
             	if ($DB->get_field('idea_records', 'usermatched', array('id'=> $recordid), $strictness=IGNORE_MISSING) == 1) {
             		$idea_matched_message='<h6> This idea already matched and project has created</h6>';
@@ -1856,6 +1857,7 @@ function idea_print_preference_form($idea, $perpage, $search, $sort='', $order='
         echo '<option value="DESC">'.get_string('descending','idea').'</option>';
     }
     echo '</select>';
+    
 
     if ($advanced) {
         $checked = ' checked="checked" ';
@@ -1864,7 +1866,8 @@ function idea_print_preference_form($idea, $perpage, $search, $sort='', $order='
         $checked = '';
     }
     $PAGE->requires->js('/mod/idea/idea.js');
-    echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
+    echo '</br>';
+    echo '<input type="hidden" name="advanced" value="0" />';
     echo '&nbsp;<input type="hidden" name="filter" value="1" />';
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
          'onchange="showHideAdvSearch(this.checked);" class="m-x-1" />' .
@@ -4323,6 +4326,8 @@ function get_courses_for_user( $category ,  $userid ){
 
 	$catcourses = coursecat::get($category)->get_courses();
 	$usercount = 0;
+	if ($catcourses){
+	
 		foreach($catcourses as $acourse) { //for all cources in the category
 			$cContext = context_course::instance($acourse->id);
 
@@ -4337,6 +4342,7 @@ function get_courses_for_user( $category ,  $userid ){
 		}
 	
 	return $usercount;
+	}
 }
 
 

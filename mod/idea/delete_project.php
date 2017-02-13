@@ -59,7 +59,7 @@ echo $OUTPUT->header();
 //echo $OUTPUT->heading($strdataplural, 2);
 	
 	$coursedeleted = delete_course($courseidtodelete);
-	
+	fix_course_sortorder();
 	//project deleation information
 	if ($coursedeleted) {
 		echo '<h5> The created project deleted  </h5>';
@@ -80,18 +80,20 @@ echo $OUTPUT->header();
 		echo '<h5>Idea unmatched not fully successful, please retry</h5>';
 	}
 
+	
+	
 	$ideaviewurl = new moodle_url('/mod/idea/view.php', array('d' => $ideaid , 'rid' =>$recordid ));
 	$viewideabutton  = new single_button($ideaviewurl, 'Back to ideas', 'post');
 	echo html_writer::tag('div', '' . $OUTPUT->render($viewideabutton),array('class' => 'mdl-align'));
 	
-	/**
+/**	
 echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			<input type="hidden" name="d" value="'.$ideaid.'" />
             			<input type="hidden" name="rid" value="'.$recordid.'" />
-            			<input type="submit" value="Back to ideas">
+            			<input type="submit" value="Back to Ideas">
             			</form>';
-            			*/
-
+            			
+*/
 
 
 echo $OUTPUT->footer();

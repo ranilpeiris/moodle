@@ -27,6 +27,22 @@ $supervisoruserid = required_param('supervisorid', PARAM_TEXT);
 $maincoursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
 
 
+///create a new category
+$params = array();
+
+	$params['name'] = "Projects";
+	$params['parent'] = $maincoursecategory;
+
+if (!$catid = $DB->get_field('course_categories', 'id', $params)){
+	$newcat = new stdClass();
+	$newcat->name = "Projects";
+	$newcat->visible = 1;
+	$newcat->parent = $maincoursecategory;
+	$newcat = coursecat::create($newcat);
+	$newcatid = $newcat->id;
+}
+$newcatid = $DB->get_field('course_categories', 'id', $params);
+
 
 echo $OUTPUT->header();
 //echo $OUTPUT->heading($strdataplural, 2);
@@ -36,7 +52,7 @@ echo $OUTPUT->header();
 $idea = array(
 		'shortname' => $ideatitle,
 		'fullname' => $ideatitle,
-		'category' => $maincoursecategory,
+		'category' => $newcatid,
 );
 
 

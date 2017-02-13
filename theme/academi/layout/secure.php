@@ -65,7 +65,7 @@ echo $OUTPUT->doctype() ?>
     </header>
 
     <div id="page-content" class="row-fluid">
-        <div id="region-bs-main-and-pre" class="span9">
+        <div id="region-bs-main-and-pre" class="row-fluid"> 
             <div class="row-fluid">
                 <section id="region-main" class="span8 pull-right">
                     <?php echo $OUTPUT->main_content(); ?>
