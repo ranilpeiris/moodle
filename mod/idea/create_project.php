@@ -8,6 +8,7 @@ require_once("../../lib/enrollib.php");
 global $USER;
 global $DB;
 
+//checked 2017 1025
 
 $PAGE->set_url('/mod/idea/create_project.php');
 

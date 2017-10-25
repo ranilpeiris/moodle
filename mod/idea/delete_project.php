@@ -45,7 +45,7 @@ $recordobj1->notavilable = 0;
 $userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
 
 if ($userrecordstatus) {
-	echo '<h5> Suoervisor unmatched </h5>';
+	echo '<h5> Supervisor unmatched </h5>';
 } else {
 	echo '<h5>Superviosr unmatched not successful</h5>';
 }
