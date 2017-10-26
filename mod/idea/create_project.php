@@ -27,6 +27,10 @@ $supervisoruserid = required_param('supervisorid', PARAM_TEXT);
 
 $maincoursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
 
+//Read main course idnumber
+$maincourseidnumber = $DB->get_field('course', 'idnumber', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
+$newcourseidnumber = rand().".".$maincourseidnumber;
+
 
 ///create a new category
 $params = array();
@@ -54,6 +58,7 @@ $idea = array(
 		'shortname' => $ideatitle,
 		'fullname' => $ideatitle,
 		'category' => $newcatid,
+		'idnumber'=>$newcourseidnumber
 );
 
 
@@ -109,4 +114,3 @@ echo '<form action="http://localhost/moodle/mod/idea/view.php" method="post">
             			</form>';
 */
 echo $OUTPUT->footer();
-
