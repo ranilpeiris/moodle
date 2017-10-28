@@ -58,7 +58,8 @@ $idea = array(
 		'shortname' => $ideatitle,
 		'fullname' => $ideatitle,
 		'category' => $newcatid,
-		'idnumber'=>$newcourseidnumber
+		'idnumber'=>$newcourseidnumber,
+		'format'=> 'periods'
 );
 
 
