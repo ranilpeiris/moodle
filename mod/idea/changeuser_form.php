@@ -19,8 +19,7 @@ class changeuser_form extends moodleform {
 		$maincoursecategory= $DB->get_field('course', 'category', array('id'=> $courseid), $strictness=IGNORE_MISSING);
 		
 		echo "<h5> <span style='color:black'> The selected idea : </span> $recordtitle <span style='color:black'> Author of this idea :</span> $recordusername  </h5>  ";
-		
-			
+				
 		//get list of users in this course
 		if($convertuserrole=="Student"){
 			$studentuserlist = $DB->get_records_sql("SELECT {user}.id, {user}.username, {user}.firstname ,{user}.lastname FROM {course}
