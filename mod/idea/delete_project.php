@@ -44,6 +44,30 @@ $recordobj1->notavilable = 0;
 
 $userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
 
+////release student id from matched recored
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->studentid= NULL;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+
+//release supervisor id from matched recored
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->supervisorid= NULL;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+
+//release thesis course name id from matched recored
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->thesiscoursename= NULL;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+
+
+
+
 if ($userrecordstatus) {
 	echo '<h5> Supervisor unmatched </h5>';
 } else {
