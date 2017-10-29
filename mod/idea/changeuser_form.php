@@ -2,7 +2,6 @@
 require_once("$CFG->libdir/formslib.php");
 require_once("$CFG->libdir/coursecatlib.php");
 
-
 class changeuser_form extends moodleform {
 	//Add elements to form
 	public function definition() {
