@@ -94,7 +94,7 @@ class changeuser_form extends moodleform {
 	
 }
 
-function get_students_no_projects( $category ,  $userlist ){
+/** function get_students_no_projects( $category ,  $userlist ){
 
 	$catcourses = coursecat::get($category)->get_courses();
 
@@ -116,9 +116,27 @@ function get_students_no_projects( $category ,  $userlist ){
 				}
 			}
 		}
-		if ($usercount<=1) {
+		if ($usercount>=1) {
 			$usernames[ (string) $author->username] = (string) $author->username;
 				
+		}
+	}
+	return $usernames;
+}
+*/
+function get_students_no_projects( $category ,  $userlist ){
+	global $DB;
+	$catcourses = coursecat::get($category)->get_courses();
+	
+	
+	$usernames=array();
+	
+	foreach($userlist as $author){ //for each studnts in the list
+		$matchedprojectcount=0;
+		$matchedprojectcount = $DB->count_records('idea_records', array('studentid'=>$author->id));
+		$numberof = 0;
+		if ($matchedprojectcount<1) {
+			$usernames[ (string) $author->username] = (string) $author->username;		
 		}
 	}
 	return $usernames;

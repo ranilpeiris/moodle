@@ -27,8 +27,10 @@ $supervisoruserid = required_param('supervisorid', PARAM_TEXT);
 
 $maincoursecategory= $DB->get_field('course', 'category', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
 
-//Read main course idnumber
+//Read main course idnumber and shortname
 $maincourseidnumber = $DB->get_field('course', 'idnumber', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
+$maincourseshortname = $DB->get_field('course', 'shortname', array('id'=> $maincourseid), $strictness=IGNORE_MISSING);
+
 $newcourseidnumber = rand().".".$maincourseidnumber;
 
 
@@ -96,6 +98,26 @@ $recordobj1->notavilable = 1;
 
 $userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
 
+//update student id
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->studentid= $studentuserid;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+
+//update supervisor id
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->supervisorid= $supervisoruserid;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
+
+//update thesis course name
+$recordobj1 = new stdclass;
+$recordobj1->id = $recordid;
+$recordobj1->thesiscoursename= $maincourseshortname;
+
+$userrecordstatus = $DB->update_record('idea_records', $recordobj1, $bulk=false);
 
 $updated =  $DB->execute('UPDATE {idea_records} SET notavilable = 1 WHERE userid = ? AND ideaid =?' , array($studentuserid , $dataid));
 
